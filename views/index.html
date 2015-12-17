@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="google-site-verification" content="69Q6M2NQ1yRrTAnwMGr3_FBOGJgs7_zlsMsDxaQ7E6s" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tab Track Server</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900"/>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/{{id}}"/>
+  <script>
+    window.ReactGlobals = {token: "{{token}}"};
+  </script>
+</head>
+<body>
+<div id="app">{{ html|safe }}</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/vendor.js"></script>
+<script src="/js/vendor.bundle.js"></script>
+<script src="/js/bundle.js"></script>
+<script>
+  //Give us toasts right when we load up the application
+  $(function() {
+    var messages = {{messages|safe}};
+    messages.forEach(function(message) {
+      toastr[message[1]](message[0]);
+    });
+  });
+</script>
+</body>
+</html>

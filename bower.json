@@ -1,0 +1,11 @@
+{
+  "name": "tab-track-server",
+  "dependencies": {
+    "bootstrap": "^3.3.5",
+    "font-awesome": "~4.5.0",
+    "jquery": "^2.1.4",
+    "magnific-popup": "^1.0.0",
+    "react-select": "~0.6.7",
+    "toastr": "^2.1.1"
+  }
+}
