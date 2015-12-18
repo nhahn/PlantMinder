@@ -26,7 +26,7 @@ class Navbar extends React.Component {
     NavbarStore.listen(this.onChange);
     AuthStore.listen(this.onChange);
 
-    let socket = io.connect(window.socket_connection, {
+    let socket = io.connect({
      transports: ['websocket'] 
     });
 

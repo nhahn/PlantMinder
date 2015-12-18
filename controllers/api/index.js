@@ -11,6 +11,7 @@ module.exports = function(passport) {
   
   router.use('/plants', require('./plants'));
   router.use('/profile', require('./profile')(passport));
+  router.use('/devices', require('./devices')); 
   
   return router
 }

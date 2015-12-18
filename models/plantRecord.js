@@ -4,7 +4,7 @@ var ObjectId = mongoose.Schema.ObjectId;
 //Extra task details here
 
 var plantRecordSchema = new mongoose.Schema({
-  plant: {type: ObjectId, required: true, index: true},
+  device: {type: ObjectId, required: true, index: true},
   time: {type: Date, required: true},
   temp: {type: Number},
   humid: {type: Number},

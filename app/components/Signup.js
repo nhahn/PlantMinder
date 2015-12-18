@@ -44,7 +44,7 @@ class Signup extends React.Component {
     }
 
     if (email && password) {
-      SignupActions.auth({router: this.context.router, token: this.state.token, email: email, password: password});
+      SignupActions.signup({router: this.context.router, token: this.state.token, email: email, password: password});
     }
   }
   

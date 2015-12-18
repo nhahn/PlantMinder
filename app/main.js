@@ -3,13 +3,6 @@ import Router from 'react-router';
 import routes from './routes';
 import alt from './alt'; 
 
-window.socket_connection = 'wss://'+window.location.host+':8443';
-
-if (window.location.hostname == "localhost")
-  window.socket_connection = "localhost:8080";
-if (window.location.hostname == "127.0.0.1")
-  window.socket_connection = "127.0.0.1:8080";
-
 if (window.ReactGlobals.token) {
   localStorage.setItem('token', window.ReactGlobals.token);
 }

@@ -1266,7 +1266,7 @@ var Navbar = (function (_React$Component) {
       _storesNavbarStore2['default'].listen(this.onChange);
       _storesAuthStore2['default'].listen(this.onChange);
 
-      var socket = io.connect(window.socket_connection, {
+      var socket = io.connect({
         transports: ['websocket']
       });
 
@@ -1989,7 +1989,7 @@ var Signup = (function (_React$Component) {
       }
 
       if (email && password) {
-        _actionsSignupActions2['default'].auth({ router: this.context.router, token: this.state.token, email: email, password: password });
+        _actionsSignupActions2['default'].signup({ router: this.context.router, token: this.state.token, email: email, password: password });
       }
     }
   }, {
@@ -2279,11 +2279,6 @@ var _routes2 = _interopRequireDefault(_routes);
 var _alt = require('./alt');
 
 var _alt2 = _interopRequireDefault(_alt);
-
-window.socket_connection = 'wss://' + window.location.host + ':8443';
-
-if (window.location.hostname == "localhost") window.socket_connection = "localhost:8080";
-if (window.location.hostname == "127.0.0.1") window.socket_connection = "127.0.0.1:8080";
 
 if (window.ReactGlobals.token) {
   localStorage.setItem('token', window.ReactGlobals.token);

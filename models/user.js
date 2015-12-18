@@ -28,12 +28,10 @@ var userSchema = new mongoose.Schema({
     name: {type: String, required: true},
     latlng: {type: [{type: Number}], require: true, validate: [function(val) { return val.length == 2 }, '{PATH} should be a lat and lon value']}, 
     plants: [{
-      deviceId: {type: String, required: true, index: true},
+      device: {type: ObjectId},
       name: {type: String, required: true},
       type: {type: String, required: true},
       outside: {type: Boolean, required: true},
-      lastUpload: {type: Date, default: 0},
-      memPosition: {type: Number, default: 0}
     }]
   }]
 });
