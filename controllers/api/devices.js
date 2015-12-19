@@ -20,7 +20,7 @@ var compareVersions = require('compare-version');
 */
 
 //Add a new task
-router.post('/update', function(req, res, next) {
+router.get('/update', function(req, res, next) {
   //Check if we have the right user agent
   var deviceInfo = {
     mac: req.get('x-ESP8266-STA-MAC'),
@@ -45,7 +45,7 @@ router.post('/update', function(req, res, next) {
 });
 
 //Get all tasks (for the logged in user)
-router.get('/:deviceID/newData', function(req, res, next) {
+router.post('/:deviceID/newData', function(req, res, next) {
   Device.findOne({uuid: req.params.deviceID}).execAsync().then(function(device) {
     //Save data here
   }).catch(function(err) {
