@@ -29,8 +29,7 @@ class SignupStore {
   onSignupFail(payload) {
     this.status = 'authError';
     this.emailValidationState = 'has-error';
-    this.passwordValidationState = 'has-error';
-    this.helpBlock = payload.errorMessage;
+    this.emailHelpBlock = payload.errorMessage;
   }
 
   onUpdateEmail(event) {

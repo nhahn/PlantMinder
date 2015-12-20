@@ -37,7 +37,11 @@ gulp.task('vendor', function() {
     'vendor/jquery/dist/jquery.js',
     'vendor/bootstrap/dist/js/bootstrap.js',
     'vendor/magnific-popup/dist/jquery.magnific-popup.js',
-    'vendor/toastr/toastr.js'
+    'vendor/toastr/toastr.js',
+    'vendor/scrollmagic/scrollmagic/uncompressed/ScrollMagic.js',
+    'vendor/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js',
+    'vendor/scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators.js',
+    'vendor/gsap/src/minified/TweenMax.min.js'
   ]).pipe(concat('vendor.js'))
     .pipe(gulpif(production, uglify({ mangle: false })))
     .pipe(gulp.dest('public/js'));

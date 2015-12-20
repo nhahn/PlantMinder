@@ -5,6 +5,32 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var _underscore = require('underscore');
+
+var AddPlantActions = function AddPlantActions() {
+  _classCallCheck(this, AddPlantActions);
+
+  this.generateActions('invalidId', 'updateId');
+};
+
+exports['default'] = _alt2['default'].createActions(AddPlantActions);
+module.exports = exports['default'];
+
+},{"../alt":9,"underscore":"underscore"}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -50,7 +76,31 @@ var AuthActions = (function () {
 exports['default'] = _alt2['default'].createActions(AuthActions);
 module.exports = exports['default'];
 
-},{"../alt":7,"underscore":"underscore"}],2:[function(require,module,exports){
+},{"../alt":9,"underscore":"underscore"}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var HomeActions = function HomeActions() {
+  _classCallCheck(this, HomeActions);
+
+  this.generateActions('clearNotification', 'addNotification', 'setNotifications');
+};
+
+exports['default'] = _alt2['default'].createActions(HomeActions);
+module.exports = exports['default'];
+
+},{"../alt":9}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -74,7 +124,7 @@ var FooterActions = function FooterActions() {
 exports['default'] = _alt2['default'].createActions(FooterActions);
 module.exports = exports['default'];
 
-},{"../alt":7}],3:[function(require,module,exports){
+},{"../alt":9}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -98,7 +148,7 @@ var HomeActions = function HomeActions() {
 exports['default'] = _alt2['default'].createActions(HomeActions);
 module.exports = exports['default'];
 
-},{"../alt":7}],4:[function(require,module,exports){
+},{"../alt":9}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -158,7 +208,7 @@ var NavbarActions = (function () {
 exports['default'] = _alt2['default'].createActions(NavbarActions);
 module.exports = exports['default'];
 
-},{"../alt":7,"underscore":"underscore"}],5:[function(require,module,exports){
+},{"../alt":9,"underscore":"underscore"}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -237,7 +287,7 @@ var ProfileActions = (function () {
 exports['default'] = _alt2['default'].createActions(ProfileActions);
 module.exports = exports['default'];
 
-},{"../alt":7,"underscore":"underscore"}],6:[function(require,module,exports){
+},{"../alt":9,"underscore":"underscore"}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -256,6 +306,10 @@ var _alt2 = _interopRequireDefault(_alt);
 
 var _underscore = require('underscore');
 
+var _actionsAuthActions = require('../actions/AuthActions');
+
+var _actionsAuthActions2 = _interopRequireDefault(_actionsAuthActions);
+
 var SignupActions = (function () {
   function SignupActions() {
     _classCallCheck(this, SignupActions);
@@ -273,8 +327,8 @@ var SignupActions = (function () {
         url: '/auth/signup',
         data: { email: payload.email, password: payload.password }
       }).done(function (data) {
-        (0, _underscore.assign)(payload, { message: data.message });
-        _this.actions.signupSuccess(payload);
+        (0, _underscore.assign)(payload, { token: data.token });
+        _actionsAuthActions2['default'].authSuccess(payload);
       }).fail(function (jqXhr) {
         (0, _underscore.assign)(payload, { errorMessage: jqXhr.responseJSON.err });
         _this.actions.signupFail(payload);
@@ -288,7 +342,7 @@ var SignupActions = (function () {
 exports['default'] = _alt2['default'].createActions(SignupActions);
 module.exports = exports['default'];
 
-},{"../alt":7,"underscore":"underscore"}],7:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../alt":9,"underscore":"underscore"}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -304,7 +358,463 @@ var _alt2 = _interopRequireDefault(_alt);
 exports['default'] = new _alt2['default']();
 module.exports = exports['default'];
 
-},{"alt":"alt"}],8:[function(require,module,exports){
+},{"alt":"alt"}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _storesAddPlantStore = require('../stores/AddPlantStore');
+
+var _storesAddPlantStore2 = _interopRequireDefault(_storesAddPlantStore);
+
+var _actionsAddPlantActions = require('../actions/AddPlantActions');
+
+var _actionsAddPlantActions2 = _interopRequireDefault(_actionsAddPlantActions);
+
+var _underscore = require('underscore');
+
+var AddPlant = (function (_React$Component) {
+    _inherits(AddPlant, _React$Component);
+
+    function AddPlant(props) {
+        _classCallCheck(this, AddPlant);
+
+        _get(Object.getPrototypeOf(AddPlant.prototype), 'constructor', this).call(this, props);
+        this.state = _storesAddPlantStore2['default'].getState();
+        this.onChange = this.onChange.bind(this);
+    }
+
+    _createClass(AddPlant, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            _storesAddPlantStore2['default'].listen(this.onChange);
+            this.controller = new ScrollMagic.Controller({ loglevel: 3, globalSceneOptions: {
+                    triggerHook: 0.35
+                } });
+            var batteryTween = TweenMax.to("#battery1", 1, { className: "+=battery-transition" });
+            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -150 }).setTween(batteryTween).addIndicators({ name: "tween battery" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+            var batteryTween2 = TweenMax.to("#battery2", 1, { className: "+=battery-transition" });
+            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -100 }).setTween(batteryTween2).addIndicators({ name: "tween battery 2" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.stickScene = new ScrollMagic.Scene({ triggerElement: "#fixed", duration: 850, offset: 50 }).setPin("#device").addIndicators({ name: "1 (duration: 300)" }).addTo(this.controller);
+            var switchTween = TweenMax.to("#switch", 1, { yPercent: "-92%" });
+            this.switchScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", duration: 80 }).setTween(switchTween).addIndicators({ name: "switch" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+            var wifiAnimation = TweenMax.staggerFromTo(".wifiBar", 2, { opacity: 0 }, { opacity: 1, repeat: -1 }, 0.2);
+            var wifiTween = TweenMax.fromTo(".wifiBar", 2, { display: "none" }, { display: "initial" });
+            this.wifiScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", offset: 80 }).setTween(wifiTween).addIndicators({ name: "wifi loop" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.menuScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger" }).setClassToggle("#netDropDown", "showNet").addIndicators({ name: "menu" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.menuWifiScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger", offset: 50 }).setClassToggle(".wifiHighlight", "plantWifi").addIndicators({ name: "menu2" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+            var plantTween = TweenMax.to("#device", 1, { yPercent: 87, scale: 0.2 });
+            this.plantScene = new ScrollMagic.Scene({ triggerElement: "#plantTrigger", duration: 100, offset: -100 }).setTween(plantTween).addIndicators({ name: "plant the sensor" }) // add indicators (requires plugin)
+            .addTo(this.controller);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            _storesAddPlantStore2['default'].unlisten(this.onChange);
+        }
+    }, {
+        key: 'onChange',
+        value: function onChange(state) {
+            this.setState(state);
+        }
+    }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            event.preventDefault();
+
+            var sensor = this.state.sensorID.trim();
+
+            if (!sensor || !sensor.match(/[a-z]+-[a-z]+-[a-z]+/)) {
+                _actionsAddPlantActions2['default'].invalidId();
+                this.refs.sensorIDField.getDOMNode().focus();
+            } else {
+                AppPlantActions.addSensor({ router: this.context.router, email: sensor });
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+
+            return _react2['default'].createElement(
+                'div',
+                { className: 'container fadeInX animated' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'row' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'col-sm-7 col-sm-offset-1' },
+                        _react2['default'].createElement(
+                            'h2',
+                            { id: 'title' },
+                            'Adding a New Plant'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'In order to add a sensor to a new plant, you need perform a series of steps to setup the sensor, and then associate it with your account'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'Just follow the instructions on this screen, and you will up and runnin in no time!'
+                        )
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'col-sm-2' },
+                        _react2['default'].createElement('img', { src: '/img/topPlant.svg', className: 'img-responsive' })
+                    )
+                ),
+                _react2['default'].createElement('hr', null),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'row', id: 'fixed' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'col-sm-2 col-sm-offset-1' },
+                        _react2['default'].createElement('img', { src: '/img/device.svg', className: 'img-responsive', id: 'device' })
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'col-sm-9' },
+                        _react2['default'].createElement(
+                            'h4',
+                            null,
+                            'First, ensure you device is powered up and has a fresh set of batteries'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'If you were having trouble recieving data from your device, it might have just run out of battery!'
+                        ),
+                        _react2['default'].createElement('img', { id: 'battery1', src: '/img/battery.svg', style: { width: "15%" } }),
+                        _react2['default'].createElement('img', { id: 'battery2', src: '/img/battery.svg', style: { width: "15%" } }),
+                        _react2['default'].createElement('div', { id: 'trigger1', className: 'spacer', style: { minHeight: 100 } }),
+                        _react2['default'].createElement(
+                            'h4',
+                            { id: 'switchTrigger' },
+                            'Next, turn on your device'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'If you are trying to reset your device, turn it one for about 1 second, and then power it off. When you turn it on again, it should allow you to enter new WiFi settings'
+                        ),
+                        _react2['default'].createElement(
+                            'svg',
+                            { version: '1.1', id: 'Layer_1', xmlns: 'http://www.w3.org/2000/svg', x: '0px', y: '0px',
+                                viewBox: '-289 381.3 32 31.7', 'enable-background': 'new -289 381.3 32 31.7', style: { width: "16%" } },
+                            _react2['default'].createElement('path', { fill: '#363942', d: 'M-261,383.1h-24c-1.1,0-2,0.9-2,2v24c0,1.1,0.9,2,2,2h24c1.1,0,2-0.9,2-2v-24 C-259,384-259.9,383.1-261,383.1z' }),
+                            _react2['default'].createElement('rect', { x: '-279', y: '387.1', fill: '#FFFFFF', width: '12', height: '20' }),
+                            _react2['default'].createElement('rect', { x: '-277', y: '397.1', fill: '#363942', width: '8', height: '8', id: 'switch' })
+                        ),
+                        _react2['default'].createElement(
+                            'svg',
+                            { version: '1.1', id: 'Layer_1', xmlns: 'http://www.w3.org/2000/svg', x: '0px', y: '0px',
+                                viewBox: '1 77 462 509.8', 'enable-background': 'new 1 77 462 509.8', style: { width: '16%', marginLeft: 40 } },
+                            _react2['default'].createElement('path', { className: 'wifiBar', d: 'M47,365c-17.7,0-32-14.3-32-32c0-17.7,14.3-32,32-32s32,14.3,32,32C79,350.7,64.7,365,47,365z' }),
+                            _react2['default'].createElement('path', { className: 'wifiBar', d: 'M108.6,259.4L88,283.9c29.2,24.5,29.2,73.8,0,98.3l20.5,24.6c21.9-18.3,34.5-45.2,34.5-73.7 C143,304.5,130.5,277.6,108.6,259.4z' }),
+                            _react2['default'].createElement('path', { className: 'wifiBar', d: 'M154.4,214.4l-21.5,23.7c26.8,24.2,42.1,58.8,42.1,94.9c0,36.1-15.3,70.6-42,94.8l21.5,23.7C187.9,421.2,207,378.1,207,333 C207,287.9,187.8,244.7,154.4,214.4z' }),
+                            _react2['default'].createElement('path', { className: 'wifiBar', d: 'M199.9,169.3l-21.8,23.4C216.8,228.9,239,280,239,333c0,53.8-21.6,103.6-60.9,140.3l21.9,23.4c45.1-42.2,71-101.8,71-163.7 C271,271.2,245.1,211.5,199.9,169.3z' }),
+                            _react2['default'].createElement('path', { className: 'wifiBar', d: 'M245.3,124.1l-22,23.2C274.7,196.1,303,262.1,303,333c0,70.9-28.3,136.8-79.6,185.6l22,23.2C303.2,486.9,335,412.7,335,333 C335,253.2,303.1,179,245.3,124.1z' }),
+                            _react2['default'].createElement('path', { className: 'wifiBar', d: 'M399,333c0-96.5-38.6-186.6-108.7-253.8l-22.2,23.1C331.9,163.4,367,245.4,367,333c0,87.7-35.1,169.6-98.8,230.7l22.2,23.1 C360.4,519.6,399,429.5,399,333z' })
+                        ),
+                        _react2['default'].createElement(
+                            'h4',
+                            { id: 'menuTrigger' },
+                            'Connect a computer, phone, or tablet to the ',
+                            _react2['default'].createElement(
+                                'b',
+                                null,
+                                'PlantMinder'
+                            ),
+                            ' WiFi network created by the device'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'It might take a few moments for the WiFi network to appear.'
+                        ),
+                        _react2['default'].createElement(
+                            'svg',
+                            { version: '1.1', id: 'Layer_1', xmlns: 'http://www.w3.org/2000/svg', x: '0px', y: '0px',
+                                viewBox: '0 0 364.9 282.4', 'enable-background': 'new 0 0 364.9 282.4', style: { width: "50%", margin: "auto", display: "block" } },
+                            _react2['default'].createElement('path', { fill: '#4C6C32', stroke: '#000000', 'stroke-width': '3', 'stroke-miterlimit': '10', d: 'M11.6,265.2c0,6.6,5.4,12,12,12h320 c6.6,0,12-5.4,12-12V40.3h-344V265.2z' }),
+                            _react2['default'].createElement('path', { fill: '#FCFCF8', stroke: '#000000', 'stroke-width': '3', 'stroke-miterlimit': '10', d: 'M343.6,10.2h-320c-6.6,0-12,5.4-12,12v18.1h344 V22.2C355.6,15.6,350.2,10.2,343.6,10.2z' }),
+                            _react2['default'].createElement(
+                                'g',
+                                null,
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M103.5,34.5c0,1-0.8,1.9-1.9,1.9c-1,0-1.9-0.8-1.9-1.9s0.8-1.9,1.9-1.9C102.7,32.6,103.5,33.4,103.5,34.5z'
+                                }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M97.3,30.9l1.4,1.2c1.4-1.7,4.3-1.7,5.8,0l1.4-1.2c-1.1-1.3-2.7-2-4.3-2C100,28.8,98.4,29.6,97.3,30.9z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M94.7,28.2l1.4,1.3c1.4-1.6,3.5-2.5,5.6-2.5s4.1,0.9,5.6,2.5l1.4-1.3c-1.8-2-4.3-3.1-7-3.1 C99,25.1,96.4,26.2,94.7,28.2z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M92,25.5l1.4,1.3c2.1-2.3,5.1-3.6,8.2-3.6c3.2,0,6.1,1.3,8.2,3.6l1.4-1.3c-2.5-2.6-6-4.2-9.6-4.2 C98,21.3,94.5,22.8,92,25.5z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M89.4,22.8l1.4,1.3c2.9-3,6.7-4.7,10.9-4.7c4.2,0,8,1.7,10.9,4.7l1.4-1.3c-3.2-3.4-7.6-5.3-12.3-5.3 C96.9,17.6,92.6,19.4,89.4,22.8z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M101.6,13.8c-5.7,0-11,2.3-14.9,6.4l1.4,1.3c3.6-3.7,8.4-5.8,13.5-5.8c5.1,0,10,2.1,13.5,5.8l1.4-1.3 C112.6,16.1,107.3,13.8,101.6,13.8z' })
+                            ),
+                            _react2['default'].createElement(
+                                'g',
+                                null,
+                                _react2['default'].createElement('polygon', { fill: '#010101', points: '142,21.8 142,28 147.4,28 151.6,32.2 151.6,17.6 147.4,21.8 \t' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M157.6,24.9L157.6,24.9L157.6,24.9C157.6,24.9,157.6,24.9,157.6,24.9c0-2.7-0.9-5-2.8-7 c-0.7-0.7-1.7,0.4-1,1c1.6,1.7,2.3,3.6,2.4,5.9c0,2.3-0.8,4.2-2.4,5.9c-0.7,0.7,0.4,1.7,1,1C156.6,29.9,157.5,27.6,157.6,24.9 L157.6,24.9z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M161.3,24.9L161.3,24.9L161.3,24.9C161.3,24.9,161.3,24.9,161.3,24.9c-0.1-3.6-1.3-6.9-3.8-9.5 c-0.7-0.7-1.7,0.4-1,1c2.2,2.4,3.3,5.2,3.4,8.5c0,3.2-1.1,6.1-3.4,8.5c-0.7,0.7,0.4,1.7,1,1C160,31.8,161.2,28.6,161.3,24.9 L161.3,24.9z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M165,24.9L165,24.9L165,24.9c-0.1-4.6-1.7-8.8-4.8-12.1c-0.7-0.7-1.7,0.4-1,1c2.9,3,4.4,6.9,4.4,11 c0,4.2-1.5,8-4.4,11c-0.7,0.7,0.4,1.7,1,1C163.3,33.7,164.9,29.5,165,24.9C165,24.9,165,24.9,165,24.9L165,24.9z' })
+                            ),
+                            _react2['default'].createElement(
+                                'g',
+                                null,
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M308,18.9h-0.7v-1.7c0-2.1-1.7-3.8-3.8-3.8h-49.7c-2.1,0-3.8,1.7-3.8,3.8v15.5c0,2.1,1.7,3.8,3.8,3.8h49.7 c2.1,0,3.8-1.7,3.8-3.8V31h0.7c1.7,0,3.2-1.4,3.2-3.2V22C311.2,20.3,309.8,18.9,308,18.9z M308.7,27.8c0,0.4-0.3,0.6-0.6,0.6h-3.2 v4.2c0,0.7-0.6,1.3-1.3,1.3h-49.7c-0.7,0-1.3-0.6-1.3-1.3V17.2c0-0.7,0.6-1.3,1.3-1.3h49.7c0.7,0,1.3,0.6,1.3,1.3v4.2h3.2 c0.3,0,0.6,0.3,0.6,0.6L308.7,27.8L308.7,27.8z' }),
+                                _react2['default'].createElement('path', { fill: '#010101', d: 'M301.8,17.2h-46.6c-0.7,0-1.3,0.6-1.3,1.3v12.9c0,0.7,0.6,1.3,1.3,1.3h46.6c0.7,0,1.3-0.6,1.3-1.3V18.5 C303.1,17.8,302.5,17.2,301.8,17.2z M280.2,27.7l-0.7,0.5l-0.7-2.2L266,30.3l10.8-8.1l0.7-0.5l0.7,2.2l12.7-4.2L280.2,27.7z' })
+                            ),
+                            _react2['default'].createElement(
+                                'text',
+                                { transform: 'matrix(1 0 0 1 191.1095 30.8321)', 'font-family': '\'ArialMT\'', 'font-size': '18.7046px' },
+                                '100%'
+                            ),
+                            _react2['default'].createElement(
+                                'g',
+                                { id: 'netDropDown' },
+                                _react2['default'].createElement('rect', { x: '76.9', y: '40.3', fill: '#FCFCF8', stroke: '#010101', 'stroke-width': '3', 'stroke-miterlimit': '10', width: '181.1', height: '193.8' }),
+                                _react2['default'].createElement(
+                                    'g',
+                                    null,
+                                    _react2['default'].createElement(
+                                        'text',
+                                        { transform: 'matrix(1 0 0 1 92.3267 106.2575)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        'GuestNetwork'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'g',
+                                        null,
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M232.8,108c0,0.8-0.6,1.4-1.4,1.4s-1.4-0.6-1.4-1.4c0-0.8,0.6-1.4,1.4-1.4S232.8,107.2,232.8,108z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M228.1,105.3l1.1,0.9c1.1-1.3,3.3-1.3,4.4,0l1.1-0.9c-0.8-1-2-1.5-3.3-1.5 C230.1,103.8,228.9,104.3,228.1,105.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M226.1,103.3l1.1,1c1.1-1.2,2.6-1.9,4.2-1.9s3.1,0.7,4.2,1.9l1.1-1c-1.3-1.5-3.3-2.3-5.3-2.3 C229.4,100.9,227.5,101.8,226.1,103.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M224.1,101.2l1,1c1.6-1.7,3.9-2.7,6.2-2.7c2.4,0,4.6,1,6.2,2.7l1-1c-1.9-2-4.5-3.2-7.3-3.2 C228.7,98.1,226,99.2,224.1,101.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M222.1,99.2l1,1c2.2-2.3,5.1-3.5,8.2-3.5s6.1,1.3,8.2,3.5l1-1c-2.4-2.6-5.7-4-9.3-4 C227.9,95.2,224.6,96.7,222.1,99.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M231.4,92.4c-4.3,0-8.3,1.7-11.3,4.8l1,1c2.7-2.8,6.4-4.4,10.2-4.4c3.9,0,7.5,1.6,10.2,4.4l1-1 C239.7,94.1,235.7,92.4,231.4,92.4z' })
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'g',
+                                    null,
+                                    _react2['default'].createElement(
+                                        'text',
+                                        { transform: 'matrix(1 0 0 1 92.3265 134.2465)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        'SecureNet'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'g',
+                                        null,
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M232.8,136c0,0.8-0.6,1.4-1.4,1.4s-1.4-0.6-1.4-1.4c0-0.8,0.6-1.4,1.4-1.4S232.8,135.2,232.8,136z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M228.1,133.3l1.1,0.9c1.1-1.3,3.3-1.3,4.4,0l1.1-0.9c-0.8-1-2-1.5-3.3-1.5 C230.1,131.8,228.9,132.3,228.1,133.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M226.1,131.2l1.1,1c1.1-1.2,2.6-1.9,4.2-1.9s3.1,0.7,4.2,1.9l1.1-1c-1.3-1.5-3.3-2.3-5.3-2.3 C229.4,128.9,227.5,129.8,226.1,131.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M224.1,129.2l1,1c1.6-1.7,3.9-2.7,6.2-2.7c2.4,0,4.6,1,6.2,2.7l1-1c-1.9-2-4.5-3.2-7.3-3.2 C228.7,126.1,226,127.2,224.1,129.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M222.1,127.2l1,1c2.2-2.3,5.1-3.5,8.2-3.5s6.1,1.3,8.2,3.5l1-1c-2.4-2.6-5.7-4-9.3-4 C227.9,123.2,224.6,124.6,222.1,127.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M231.4,120.4c-4.3,0-8.3,1.7-11.3,4.8l1,1c2.7-2.8,6.4-4.4,10.2-4.4c3.9,0,7.5,1.6,10.2,4.4l1-1 C239.7,122.1,235.7,120.4,231.4,120.4z' })
+                                    ),
+                                    _react2['default'].createElement('path', { fill: '#010101', d: 'M210.3,127.9v-3.2c0-3.5-2.9-6.4-6.4-6.4s-6.4,2.9-6.4,6.4v3.2h-1.2v11.7h15.1v-11.7H210.3z M199.3,124.8 c0-2.6,2.1-4.7,4.7-4.7c2.6,0,4.7,2.1,4.7,4.7v3.2h-9.3V124.8z' })
+                                ),
+                                _react2['default'].createElement('rect', { x: '78.6', y: '144.7', fill: '#1D75BC', width: '177.8', height: '26.1', className: 'wifiHighlight', id: 'wifiHighlight' }),
+                                _react2['default'].createElement(
+                                    'g',
+                                    { className: 'wifiHighlight' },
+                                    _react2['default'].createElement(
+                                        'text',
+                                        { transform: 'matrix(1 0 0 1 92.3265 162.2355)', fill: '#010101', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        'PlantMinder'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'g',
+                                        null,
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M232.8,164c0,0.8-0.6,1.4-1.4,1.4c-0.8,0-1.4-0.6-1.4-1.4c0-0.8,0.6-1.4,1.4-1.4 C232.2,162.6,232.8,163.2,232.8,164z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M228.1,161.3l1.1,0.9c1.1-1.3,3.3-1.3,4.4,0l1.1-0.9c-0.8-1-2-1.5-3.3-1.5 C230.1,159.7,228.9,160.3,228.1,161.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M226.1,159.2l1.1,1c1.1-1.2,2.6-1.9,4.2-1.9c1.6,0,3.1,0.7,4.2,1.9l1.1-1c-1.3-1.5-3.3-2.3-5.3-2.3 C229.4,156.9,227.5,157.8,226.1,159.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M224.1,157.2l1,1c1.6-1.7,3.9-2.7,6.2-2.7c2.4,0,4.6,1,6.2,2.7l1-1c-1.9-2-4.5-3.2-7.3-3.2 C228.7,154.1,226,155.2,224.1,157.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M222.1,155.2l1,1c2.2-2.3,5.1-3.5,8.2-3.5c3.1,0,6.1,1.3,8.2,3.5l1-1c-2.4-2.6-5.7-4-9.3-4 C227.9,151.2,224.6,152.6,222.1,155.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M231.4,148.4c-4.3,0-8.3,1.7-11.3,4.8l1,1c2.7-2.8,6.4-4.4,10.2-4.4c3.9,0,7.5,1.6,10.2,4.4l1-1 C239.7,150.1,235.7,148.4,231.4,148.4z' })
+                                    )
+                                ),
+                                _react2['default'].createElement(
+                                    'g',
+                                    null,
+                                    _react2['default'].createElement(
+                                        'text',
+                                        { transform: 'matrix(1 0 0 1 92.3264 190.2244)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        'FiosWiFi'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'g',
+                                        null,
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M232.8,192c0,0.8-0.6,1.4-1.4,1.4c-0.8,0-1.4-0.6-1.4-1.4c0-0.8,0.6-1.4,1.4-1.4 C232.2,190.6,232.8,191.2,232.8,192z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M228.1,189.3l1.1,0.9c1.1-1.3,3.3-1.3,4.4,0l1.1-0.9c-0.8-1-2-1.5-3.3-1.5 C230.1,187.7,228.9,188.3,228.1,189.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M226.1,187.2l1.1,1c1.1-1.2,2.6-1.9,4.2-1.9c1.6,0,3.1,0.7,4.2,1.9l1.1-1c-1.3-1.5-3.3-2.3-5.3-2.3 C229.4,184.9,227.5,185.7,226.1,187.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M224.1,185.2l1,1c1.6-1.7,3.9-2.7,6.2-2.7c2.4,0,4.6,1,6.2,2.7l1-1c-1.9-2-4.5-3.2-7.3-3.2 C228.7,182.1,226,183.2,224.1,185.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M222.1,183.2l1,1c2.2-2.3,5.1-3.5,8.2-3.5c3.1,0,6.1,1.3,8.2,3.5l1-1c-2.4-2.6-5.7-4-9.3-4 C227.9,179.2,224.6,180.6,222.1,183.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M231.4,176.4c-4.3,0-8.3,1.7-11.3,4.8l1,1c2.7-2.8,6.4-4.4,10.2-4.4c3.9,0,7.5,1.6,10.2,4.4l1-1 C239.7,178.1,235.7,176.4,231.4,176.4z' })
+                                    ),
+                                    _react2['default'].createElement('path', { fill: '#010101', d: 'M210.3,183.9v-3.2c0-3.5-2.9-6.4-6.4-6.4c-3.5,0-6.4,2.9-6.4,6.4v3.2h-1.2v11.7h15.1v-11.7H210.3z M199.3,180.7c0-2.6,2.1-4.7,4.7-4.7c2.6,0,4.7,2.1,4.7,4.7v3.2h-9.3V180.7z' })
+                                ),
+                                _react2['default'].createElement(
+                                    'g',
+                                    null,
+                                    _react2['default'].createElement(
+                                        'text',
+                                        { transform: 'matrix(1 0 0 1 92.3265 80.2686)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        'NetworkA'
+                                    ),
+                                    _react2['default'].createElement(
+                                        'g',
+                                        null,
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M232.8,80c0,0.8-0.6,1.4-1.4,1.4S230,80.8,230,80c0-0.8,0.6-1.4,1.4-1.4S232.8,79.3,232.8,80z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M228.1,77.3l1.1,0.9c1.1-1.3,3.3-1.3,4.4,0l1.1-0.9c-0.8-1-2-1.5-3.3-1.5 C230.1,75.8,228.9,76.3,228.1,77.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M226.1,75.3l1.1,1c1.1-1.2,2.6-1.9,4.2-1.9s3.1,0.7,4.2,1.9l1.1-1c-1.3-1.5-3.3-2.3-5.3-2.3 C229.4,72.9,227.5,73.8,226.1,75.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M224.1,73.3l1,1c1.6-1.7,3.9-2.7,6.2-2.7c2.4,0,4.6,1,6.2,2.7l1-1c-1.9-2-4.5-3.2-7.3-3.2 C228.7,70.1,226,71.2,224.1,73.3z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M222.1,71.2l1,1c2.2-2.3,5.1-3.5,8.2-3.5s6.1,1.3,8.2,3.5l1-1c-2.4-2.6-5.7-4-9.3-4 C227.9,67.3,224.6,68.7,222.1,71.2z' }),
+                                        _react2['default'].createElement('path', { fill: '#010101', d: 'M231.4,64.4c-4.3,0-8.3,1.7-11.3,4.8l1,1c2.7-2.8,6.4-4.4,10.2-4.4c3.9,0,7.5,1.6,10.2,4.4l1-1 C239.7,66.1,235.7,64.4,231.4,64.4z' })
+                                    ),
+                                    _react2['default'].createElement('path', { fill: '#010101', d: 'M210.3,72v-3.2c0-3.5-2.9-6.4-6.4-6.4s-6.4,2.9-6.4,6.4V72h-1.2v11.7h15.1V72H210.3z M199.3,68.8 c0-2.6,2.1-4.7,4.7-4.7c2.6,0,4.7,2.1,4.7,4.7V72h-9.3V68.8z' })
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'h4',
+                            { id: 'netTrigger' },
+                            'A connection screen should appear on your device, or try to navigate to a URL in your browser'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'A connection screen might take a little while to appear. If entering a URL in the browser, you should automatically be redirected to the device connection page'
+                        ),
+                        _react2['default'].createElement(
+                            'h4',
+                            { id: 'credTrigger' },
+                            'Enter your WiFi credentials into the web page. Your device will restart and try to connect to the WiFi network.'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'If there was an error, the device will restart and the ',
+                            _react2['default'].createElement(
+                                'b',
+                                null,
+                                'PlantMinder'
+                            ),
+                            ' will reappear. Reconnect to the network and try your credentials again'
+                        ),
+                        _react2['default'].createElement(
+                            'h4',
+                            null,
+                            'Finally, enter the device identifier found on the back into the form below. This will associated the device with your account.'
+                        ),
+                        _react2['default'].createElement(
+                            'p',
+                            null,
+                            'If trying to tranfer a device from one person to another, contact ',
+                            _react2['default'].createElement(
+                                'a',
+                                { href: 'mailto:nphahn@gmail.com' },
+                                'nphahn@gmail.com'
+                            )
+                        )
+                    )
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'row', id: 'plantTrigger' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'col-sm-2 col-sm-offset-1' },
+                        _react2['default'].createElement('img', { src: '/img/plantTop.svg', className: 'img-responsive', style: { zIndex: -10, position: 'relative' } }),
+                        _react2['default'].createElement('img', { src: '/img/tableBottom.svg', className: 'img-responsive', style: { zIndex: 3, position: 'relative' } })
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'col-sm-9' },
+                        _react2['default'].createElement(
+                            'div',
+                            { className: 'panel panel-default' },
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'panel-heading' },
+                                'Add Sensor'
+                            ),
+                            _react2['default'].createElement(
+                                'div',
+                                { className: 'panel-body' },
+                                _react2['default'].createElement(
+                                    'form',
+                                    { onSubmit: this.handleSubmit.bind(this) },
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'form-group ' + this.state.idValidationState ? this.state.idValidationState : '' },
+                                        _react2['default'].createElement(
+                                            'label',
+                                            { className: 'control-label' },
+                                            'Sensor ID'
+                                        ),
+                                        _react2['default'].createElement('input', { type: 'text', className: 'form-control', ref: 'sensorIDField', value: this.state.sensorId,
+                                            onChange: _actionsAddPlantActions2['default'].updateId }),
+                                        _react2['default'].createElement(
+                                            'span',
+                                            { className: 'help-block' },
+                                            this.state.helpBlock
+                                        )
+                                    ),
+                                    _react2['default'].createElement(
+                                        'div',
+                                        { className: 'form-group pull-left' },
+                                        _react2['default'].createElement(
+                                            'button',
+                                            { type: 'submit', className: 'btn btn-primary btn-space' },
+                                            'Add Sensor'
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                _react2['default'].createElement('div', { className: 'spacer', style: { minHeight: 100 } })
+            );
+        }
+    }]);
+
+    return AddPlant;
+})(_react2['default'].Component);
+
+AddPlant.contextTypes = {
+    router: _react2['default'].PropTypes.func.isRequired
+};
+
+exports['default'] = AddPlant;
+module.exports = exports['default'];
+/*Battery Animation*/ /*Switch Animation*/ /*Network Animation*/
+
+},{"../actions/AddPlantActions":1,"../stores/AddPlantStore":28,"react":"react","underscore":"underscore"}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -439,7 +949,7 @@ App.contextTypes = {
 exports['default'] = App;
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":3,"../stores/AuthStore":25,"./Footer":11,"./Navbar":14,"react":"react","react-router":"react-router","underscore":"underscore"}],9:[function(require,module,exports){
+},{"../actions/HomeActions":5,"../stores/AuthStore":29,"./Footer":14,"./Navbar":17,"react":"react","react-router":"react-router","underscore":"underscore"}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -589,7 +1099,7 @@ var Auth = (function (_React$Component) {
                     { onSubmit: this.handleSubmit.bind(this) },
                     _react2['default'].createElement(
                       'div',
-                      { className: 'form-group ' + this.state.emailValidationState },
+                      { className: 'form-group ' + this.state.emailValidationState ? this.state.emailValidationState : '' },
                       _react2['default'].createElement(
                         'label',
                         { className: 'control-label' },
@@ -600,7 +1110,7 @@ var Auth = (function (_React$Component) {
                     ),
                     _react2['default'].createElement(
                       'div',
-                      { className: 'form-group ' + this.state.passwordValidationState },
+                      { className: 'form-group ' + this.state.passwordValidationState ? this.state.passwordValidationState : '' },
                       _react2['default'].createElement(
                         'label',
                         { className: 'control-label' },
@@ -670,7 +1180,7 @@ Auth.contextTypes = {
 exports['default'] = Auth;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":1,"../stores/AuthStore":25,"react":"react","underscore":"underscore"}],10:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../stores/AuthStore":29,"react":"react","underscore":"underscore"}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -730,7 +1240,7 @@ var Feedback = (function (_React$Component) {
 exports['default'] = Feedback;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],11:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -870,7 +1380,7 @@ var Footer = (function (_React$Component) {
 exports['default'] = Footer;
 module.exports = exports['default'];
 
-},{"../actions/FooterActions":2,"../stores/FooterStore":26,"react":"react","react-router":"react-router"}],12:[function(require,module,exports){
+},{"../actions/FooterActions":4,"../stores/FooterStore":30,"react":"react","react-router":"react-router"}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1018,7 +1528,7 @@ var Home = (function (_React$Component) {
 exports['default'] = Home;
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":3,"../stores/HomeStore":27,"react":"react","react-router":"react-router"}],13:[function(require,module,exports){
+},{"../actions/HomeActions":5,"../stores/HomeStore":31,"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1191,7 +1701,7 @@ InlineEdit.propTypes = {
 exports['default'] = InlineEdit;
 module.exports = exports['default'];
 
-},{"react":"react"}],14:[function(require,module,exports){
+},{"react":"react"}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1333,7 +1843,7 @@ var Navbar = (function (_React$Component) {
           ),
           _react2['default'].createElement(
             NavLink,
-            { to: '/addSensor' },
+            { to: '/addPlant' },
             'Add a Sensor'
           ),
           _react2['default'].createElement(
@@ -1435,7 +1945,7 @@ Navbar.contextTypes = {
 exports['default'] = Navbar;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":1,"../actions/HomeActions":3,"../actions/NavbarActions":4,"../stores/AuthStore":25,"../stores/HomeStore":27,"../stores/NavbarStore":28,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],15:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../actions/HomeActions":5,"../actions/NavbarActions":6,"../stores/AuthStore":29,"../stores/HomeStore":31,"../stores/NavbarStore":32,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1495,7 +2005,7 @@ var PlantList = (function (_React$Component) {
 exports['default'] = PlantList;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1559,7 +2069,7 @@ var Plants = (function (_React$Component) {
 exports['default'] = Plants;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],17:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1715,7 +2225,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":5,"../stores/ProfileStore":29,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],18:[function(require,module,exports){
+},{"../actions/ProfileActions":7,"../stores/ProfileStore":33,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1764,7 +2274,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":5,"react":"react","react-router":"react-router"}],19:[function(require,module,exports){
+},{"../actions/ProfileActions":7,"react":"react","react-router":"react-router"}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1813,7 +2323,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":5,"react":"react","react-router":"react-router"}],20:[function(require,module,exports){
+},{"../actions/ProfileActions":7,"react":"react","react-router":"react-router"}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1908,7 +2418,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":5,"./InlineEdit":13,"react":"react","react-router":"react-router"}],21:[function(require,module,exports){
+},{"../actions/ProfileActions":7,"./InlineEdit":16,"react":"react","react-router":"react-router"}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2040,7 +2550,7 @@ var Signup = (function (_React$Component) {
                   { onSubmit: this.handleSubmit.bind(this) },
                   _react2['default'].createElement(
                     'div',
-                    { className: 'form-group ' + this.state.emailValidationState },
+                    { className: 'form-group ' + this.state.emailValidationState ? this.state.emailValidationState : '' },
                     _react2['default'].createElement(
                       'label',
                       { className: 'control-label' },
@@ -2062,7 +2572,7 @@ var Signup = (function (_React$Component) {
                       { className: 'col-sm-8' },
                       _react2['default'].createElement(
                         'div',
-                        { className: 'form-group ' + this.state.passwordValidationState },
+                        { className: 'form-group ' + this.state.passwordValidationState ? this.state.passwordValidationState : '' },
                         _react2['default'].createElement(
                           'label',
                           { className: 'control-label' },
@@ -2078,7 +2588,7 @@ var Signup = (function (_React$Component) {
                       ),
                       _react2['default'].createElement(
                         'div',
-                        { className: 'form-group ' + this.state.confirmationValidationState },
+                        { className: 'form-group ' + this.state.confirmationValidationState ? this.state.confirmationValidationState : '' },
                         _react2['default'].createElement(
                           'label',
                           { className: 'control-label' },
@@ -2137,7 +2647,7 @@ Signup.contextTypes = {
 exports['default'] = Signup;
 module.exports = exports['default'];
 
-},{"../actions/SignupActions":6,"../stores/SignupStore":30,"react":"react","underscore":"underscore"}],22:[function(require,module,exports){
+},{"../actions/SignupActions":8,"../stores/SignupStore":34,"react":"react","underscore":"underscore"}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2259,7 +2769,7 @@ var guardRouteAsync = function guardRouteAsync(fn, Component, _ref2) {
 exports.GuardRoute = guardRoute;
 exports.GuardRouteAsync = guardRouteAsync;
 
-},{"react":"react"}],23:[function(require,module,exports){
+},{"react":"react"}],26:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -2296,7 +2806,7 @@ _reactRouter2['default'].run(_routes2['default'], _reactRouter2['default'].Histo
   _react2['default'].render(_react2['default'].createElement(Handler, null), document.getElementById('app'));
 });
 
-},{"./alt":7,"./routes":24,"react":"react","react-router":"react-router"}],24:[function(require,module,exports){
+},{"./alt":9,"./routes":27,"react":"react","react-router":"react-router"}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2363,6 +2873,10 @@ var _componentsProfileNotifications = require('./components/ProfileNotifications
 
 var _componentsProfileNotifications2 = _interopRequireDefault(_componentsProfileNotifications);
 
+var _componentsAddPlant = require('./components/AddPlant');
+
+var _componentsAddPlant2 = _interopRequireDefault(_componentsAddPlant);
+
 //Verify token here??
 
 var requireAuth = _guards.GuardRoute.bind(undefined, function () {
@@ -2393,6 +2907,7 @@ var routes = _react2['default'].createElement(
     _react2['default'].createElement(_reactRouter.Route, { path: 'google/callback', handler: _componentsHome2['default'] }),
     _react2['default'].createElement(_reactRouter.Route, { path: 'facebook/callback', handler: _componentsHome2['default'] })
   ),
+  _react2['default'].createElement(_reactRouter.Route, { path: '/addPlant', handler: _componentsAddPlant2['default'] }),
   _react2['default'].createElement(
     _reactRouter.Route,
     { path: 'plants', handler: _componentsPlants2['default'] },
@@ -2411,7 +2926,61 @@ var routes = _react2['default'].createElement(
 exports['default'] = routes;
 module.exports = exports['default'];
 
-},{"./components/App":8,"./components/Auth":9,"./components/Feedback":10,"./components/Home":12,"./components/PlantList":15,"./components/Plants":16,"./components/Profile":17,"./components/ProfileEdit":18,"./components/ProfileNotifications":19,"./components/ProfileOverview":20,"./components/Signup":21,"./guards":22,"./stores/AuthStore":25,"react":"react","react-router":"react-router","underscore":"underscore"}],25:[function(require,module,exports){
+},{"./components/AddPlant":10,"./components/App":11,"./components/Auth":12,"./components/Feedback":13,"./components/Home":15,"./components/PlantList":18,"./components/Plants":19,"./components/Profile":20,"./components/ProfileEdit":21,"./components/ProfileNotifications":22,"./components/ProfileOverview":23,"./components/Signup":24,"./guards":25,"./stores/AuthStore":29,"react":"react","react-router":"react-router","underscore":"underscore"}],28:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var _actionsFlashActions = require('../actions/FlashActions');
+
+var _actionsFlashActions2 = _interopRequireDefault(_actionsFlashActions);
+
+var _underscore = require('underscore');
+
+var AddPlantStore = (function () {
+  function AddPlantStore() {
+    _classCallCheck(this, AddPlantStore);
+
+    this.bindActions(_actionsFlashActions2['default']);
+    this.sensorID = '';
+    this.idValidationState = '';
+    this.helpBlock = '';
+  }
+
+  _createClass(AddPlantStore, [{
+    key: 'onUpdateId',
+    value: function onUpdateId(event) {
+      this.sensorID = event.target.value;
+      this.idValidationState = '';
+      this.helpBlock = '';
+    }
+  }, {
+    key: 'onInvalidId',
+    value: function onInvalidId() {
+      this.idValidationState = 'has-error';
+      this.helpBlock = 'Please enter a valid sensor ID';
+    }
+  }]);
+
+  return AddPlantStore;
+})();
+
+exports['default'] = _alt2['default'].createStore(AddPlantStore);
+module.exports = exports['default'];
+
+},{"../actions/FlashActions":3,"../alt":9,"underscore":"underscore"}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2462,12 +3031,10 @@ var AuthStore = (function () {
       localStorage.setItem('token', payload.token);
       this.status = 'loggedIn';
       var query = payload.router.getCurrentQuery();
-      if (query.oldPath) {
-        setTimeout(function () {
-          //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
-          payload.router.transitionTo(query.oldPath, query.oldParams, query.oldQuery);
-        }, 1000);
-      }
+      setTimeout(function () {
+        //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
+        payload.router.transitionTo(query.oldPath || '/', query.oldParams, query.oldQuery);
+      }, 1000);
     }
   }, {
     key: 'onAuthFail',
@@ -2523,7 +3090,7 @@ var AuthStore = (function () {
 exports['default'] = _alt2['default'].createStore(AuthStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":1,"../alt":7}],26:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../alt":9}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2551,7 +3118,7 @@ var FooterStore = function FooterStore() {
 exports['default'] = _alt2['default'].createStore(FooterStore);
 module.exports = exports['default'];
 
-},{"../actions/FooterActions":2,"../alt":7}],27:[function(require,module,exports){
+},{"../actions/FooterActions":4,"../alt":9}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2579,7 +3146,7 @@ var HomeStore = function HomeStore() {
 exports['default'] = _alt2['default'].createStore(HomeStore);
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":3,"../alt":7}],28:[function(require,module,exports){
+},{"../actions/HomeActions":5,"../alt":9}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2657,7 +3224,7 @@ var NavbarStore = (function () {
 exports['default'] = _alt2['default'].createStore(NavbarStore);
 module.exports = exports['default'];
 
-},{"../actions/NavbarActions":4,"../alt":7}],29:[function(require,module,exports){
+},{"../actions/NavbarActions":6,"../alt":9}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2739,7 +3306,7 @@ var ProfileStore = (function () {
 exports['default'] = _alt2['default'].createStore(ProfileStore);
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":5,"../alt":7,"underscore":"underscore"}],30:[function(require,module,exports){
+},{"../actions/ProfileActions":7,"../alt":9,"underscore":"underscore"}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2797,8 +3364,7 @@ var SignupStore = (function () {
     value: function onSignupFail(payload) {
       this.status = 'authError';
       this.emailValidationState = 'has-error';
-      this.passwordValidationState = 'has-error';
-      this.helpBlock = payload.errorMessage;
+      this.emailHelpBlock = payload.errorMessage;
     }
   }, {
     key: 'onUpdateEmail',
@@ -2877,4 +3443,4 @@ var SignupStore = (function () {
 exports['default'] = _alt2['default'].createStore(SignupStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":1,"../actions/SignupActions":6,"../alt":7}]},{},[23]);
+},{"../actions/AuthActions":2,"../actions/SignupActions":8,"../alt":9}]},{},[26]);

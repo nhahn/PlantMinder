@@ -7,6 +7,7 @@ import Home from './components/Home';
 import Auth from './components/Auth';
 import AuthStore from './stores/AuthStore';
 import Signup from './components/Signup';
+
 import Plants from './components/Plants';
 import PlantList from './components/PlantList';
 import Feedback from './components/Feedback';
@@ -15,6 +16,8 @@ import Profile from './components/Profile';
 import ProfileOverview from './components/ProfileOverview';
 import ProfileEdit from './components/ProfileEdit';
 import ProfileNotifications from './components/ProfileNotifications';
+
+import AddPlant from './components/AddPlant';
 
 //Verify token here??
 
@@ -43,6 +46,7 @@ let routes = (
       <Route path="google/callback" handler={Home}/>
       <Route path="facebook/callback" handler={Home}/>
     </Route>
+    <Route path="/addPlant" handler={AddPlant}/>
     <Route path="plants" handler={Plants}>
       <DefaultRoute handler={PlantList}/>
     </Route>

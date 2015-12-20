@@ -11,6 +11,8 @@ var deviceSchema = new mongoose.Schema({
   mac: String,
   lastConnection: {type: Date, required: true, default: Date.now},
   config: {
+    fileSize: {type: Number, default: 600}, //time between transfers (fileSize / 20) * 20
+    measurementFrequency: {type: Number, default: 180}, //sleep time in seconds
     humidDiff: {type: Number, default: 20},
     tempDiff: {type: Number, default: 10},
     luxDiff: {type: Number, default: 400},

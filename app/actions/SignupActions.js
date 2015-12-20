@@ -1,5 +1,6 @@
 import alt from '../alt';
 import {assign} from 'underscore';
+import AuthActions from '../actions/AuthActions';
 
 class SignupActions {
   constructor() {
@@ -22,8 +23,8 @@ class SignupActions {
       data: { email: payload.email, password: payload.password }
     })  
       .done((data) => {
-        assign(payload, {message: data.message});
-        this.actions.signupSuccess(payload);
+        assign(payload, {token: data.token});
+        AuthActions.authSuccess(payload);
       })  
       .fail((jqXhr) => {
         assign(payload, {errorMessage: jqXhr.responseJSON.err});

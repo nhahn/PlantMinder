@@ -70,7 +70,7 @@ class Navbar extends React.Component {
         <ul className='nav navbar-nav'>
           <NavLink to='/'>Home</NavLink>
           <NavLink to="/plants">Plants</NavLink>
-          <NavLink to="/addSensor">Add a Sensor</NavLink>
+          <NavLink to="/addPlant">Add a Sensor</NavLink>
           <NavLink to="/profile">Profile</NavLink>
           <NavLink to='/feedback'>Feedback</NavLink>
         </ul>

@@ -24,9 +24,8 @@ module.exports = function(passport) {
   router.post('/signup', function(req, res, next){
     passport.authenticate('local-signup', function(err, user, info) {
       if (err) {
-        res.status(403);
-        return res.json({err: err}) };
-      if (!user) {return res.json({err: info}) };
+        return res.status(500).json({err: err}) };
+      if (!user) {return res.status(403).json({err: info}) };
       var token = jwt.sign({user: user._id, email: user.email}, config.jwtKey, config.jwtOptions);
       res.json({token: token});
     })(req, res, next);
@@ -37,7 +36,7 @@ module.exports = function(passport) {
   router.post('/login', function(req, res, next) {
     passport.authenticate('local-login', function(err, user, info) {
       if (err || !user) {
-        res.status(401); 
+        res.status(403); 
         if (!user) {
           res.flash("Incorrect username and/or password", "error");
           res.json({err: "Please provide a valid email and/or password"});

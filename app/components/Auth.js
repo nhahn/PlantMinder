@@ -80,12 +80,12 @@ class Auth extends React.Component {
                 <div className='panel-heading'>Log In</div>
                 <div className='panel-body'>
                   <form onSubmit={this.handleSubmit.bind(this)}>
-                    <div className={'form-group ' + this.state.emailValidationState}>
+                    <div className={'form-group ' + this.state.emailValidationState? this.state.emailValidationState : ''}>
                       <label className='control-label'>Email</label>
                       <input type='email' className='form-control' ref='emailTextField' value={this.state.email}
                              onChange={AuthActions.updateEmail} autoFocus/>
                     </div>
-                    <div className={'form-group ' + this.state.passwordValidationState}>
+                    <div className={'form-group ' + this.state.passwordValidationState? this.state.passwordValidationState : ''}>
                       <label className='control-label'>Password</label>
                       <input type='password' className='form-control' ref='passwordTextField' value={this.state.password}
                              onChange={AuthActions.updatePassword} />

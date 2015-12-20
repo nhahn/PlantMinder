@@ -27,6 +27,7 @@
     "cors": "^2.7.1",
     "express": "^4.13.1",
     "express-validator": "^2.18.0",
+    "gsap": "^1.18.0",
     "jsonwebtoken": "^5.0.4",
     "mongoose": "^4.0.7",
     "morgan": "^1.6.1",

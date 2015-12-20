@@ -26,11 +26,10 @@ class AuthStore {
     localStorage.setItem('token', payload.token);
     this.status = 'loggedIn';
     let query = payload.router.getCurrentQuery();
-    if (query.oldPath) {
-      setTimeout(() =>{ //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
-        payload.router.transitionTo(query.oldPath, query.oldParams, query.oldQuery);
-      }, 1000);
-    }
+    setTimeout(() =>{ //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
+      payload.router.transitionTo(query.oldPath || '/', query.oldParams, query.oldQuery);
+    }, 1000);
+    
   }
 
   onAuthFail(payload) {

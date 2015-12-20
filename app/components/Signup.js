@@ -79,7 +79,7 @@ class Signup extends React.Component {
               <div className='panel-heading'>Log In</div>
               <div className='panel-body'>
                 <form onSubmit={this.handleSubmit.bind(this)}>
-                  <div className={'form-group ' + this.state.emailValidationState}>
+                  <div className={'form-group ' + this.state.emailValidationState? this.state.emailValidationState : ''}>
                     <label className='control-label'>Email</label>
                     <input type='email' className='form-control' ref='emailTextField' value={this.state.email}
                            onChange={SignupActions.updateEmail} onBlur={this.validateEmail.bind(this)} autoFocus/>
@@ -87,13 +87,13 @@ class Signup extends React.Component {
                   </div>
                   <div className="row">
                     <div className="col-sm-8">
-                      <div className={'form-group ' + this.state.passwordValidationState}>
+                      <div className={'form-group ' + this.state.passwordValidationState? this.state.passwordValidationState : ''}>
                         <label className='control-label'>Password</label>
                         <input type='password' className='form-control' ref='passwordTextField' value={this.state.password}
                                onChange={SignupActions.updatePassword} onBlur={this.validatePassword.bind(this)}/>
                         <span className='help-block'>{this.state.passwordHelpBlock}</span>
                       </div>
-                      <div className={'form-group ' + this.state.confirmationValidationState}>
+                      <div className={'form-group ' + this.state.confirmationValidationState? this.state.confirmationValidationState : ''}>
                         <label className='control-label'>Password Confirmation</label>
                         <input type='password' className='form-control' ref='passwordTextField' value={this.state.confirmation}
                                onChange={SignupActions.updateConfirmation} onBlur={this.validatePassword.bind(this)}/>

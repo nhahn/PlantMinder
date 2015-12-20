@@ -22,12 +22,13 @@ var userSchema = new mongoose.Schema({
       email        : {type: String, match: /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i },
       name         : String
   },
-  image: Buffer,
+  image: {data: Buffer, type: String},
   lastLogin: {type: Date, default: Date.now},
   locations: [{
     name: {type: String, required: true},
     latlng: {type: [{type: Number}], require: true, validate: [function(val) { return val.length == 2 }, '{PATH} should be a lat and lon value']}, 
     plants: [{
+      image: {data: Buffer, type: String},
       device: {type: ObjectId},
       name: {type: String, required: true},
       type: {type: String, required: true},

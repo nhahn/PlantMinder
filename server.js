@@ -1,6 +1,8 @@
+var path = require('path');
 global.rootRequire = function(name) {
   return require(__dirname + '/' + name);
 }
+global.appRoot = path.resolve(__dirname)
 
 var express = require('express');
 var path = require('path');
@@ -31,8 +33,11 @@ app.use(expressValidator({
   }
 }));
 app.use(logger('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.raw({ type: 'application/sensordata' }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 require('./config/passport')(passport); // pass passport for configuration

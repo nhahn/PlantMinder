@@ -897,25 +897,45 @@ label {
   white-space: nowrap; 
 }
 
-//Transition properties for labeling
-.tab-label-enter {
-  opacity: 0.01;
+//Transitions for adding page
+.battery-transition {
+   transform: rotate(90deg);
+   margin-left: -10%;
+   margin-top: 4%; 
 }
 
-.tab-label-enter.tab-label-enter-active {
-  opacity: 1;
-  transition: opacity .5s ease-in;
+.wifiBar {
+  opacity: 0;
 }
 
-.tab-label-leave {
-  opacity: 1;
+#netDropDown {
+  opacity: 0; 
+  -webkit-transition:200ms ease;
+  -moz-transition:200ms ease;
+  -o-transition:200ms ease;
+  transition:200ms ease;
 }
 
-.tab-label-leave.tab-label-leave-active {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
+#netDropDown.showNet {
+  opacity: 1; 
 }
 
-.navbar-text.navbar-right {
-  margin-right: 25px; 
+.plantWifi path {
+  fill: #FFFFFF;
+}
+
+.plantWifi text {
+  fill: #FFFFFF;
+}
+
+#wifiHighlight {
+  opacity: 0; 
+  -webkit-transition:200ms ease;
+  -moz-transition:200ms ease;
+  -o-transition:200ms ease;
+  transition:200ms ease;
+}
+
+#wifiHighlight.plantWifi {
+  opacity: 1; 
 }
