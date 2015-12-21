@@ -10,6 +10,7 @@ import Signup from './components/Signup';
 
 import Plants from './components/Plants';
 import PlantList from './components/PlantList';
+import Plant from './components/Plant';
 import Feedback from './components/Feedback';
 
 import Profile from './components/Profile';
@@ -46,9 +47,10 @@ let routes = (
       <Route path="google/callback" handler={Home}/>
       <Route path="facebook/callback" handler={Home}/>
     </Route>
-    <Route path="/addPlant" handler={AddPlant}/>
+    <Route path="addPlant" handler={AddPlant}/>
     <Route path="plants" handler={Plants}>
       <DefaultRoute handler={PlantList}/>
+      <Route path="/plant/:id" handler={Plant}/>
     </Route>
     <Route path="profile" handler={Profile}>
       <DefaultRoute handler={ProfileOverview}/>

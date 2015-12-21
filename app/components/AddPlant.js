@@ -13,44 +13,38 @@ class AddPlant extends React.Component {
 
   componentDidMount() {
     AddPlantStore.listen(this.onChange);
-    this.controller = new ScrollMagic.Controller({loglevel: 3, globalSceneOptions: {
+    this.controller = new ScrollMagic.Controller({globalSceneOptions: {
         triggerHook: 0.35
     }});
     var batteryTween = TweenMax.to("#battery1", 1, {className: "+=battery-transition"});
     this.batteryScene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: "25%", offset: -150})
 					   .setTween(batteryTween)
-					   .addIndicators({name: "tween battery"}) // add indicators (requires plugin)
 					   .addTo(this.controller);
     var batteryTween2 = TweenMax.to("#battery2", 1, {className: "+=battery-transition"});
     this.batteryScene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: "25%", offset: -100})
 					   .setTween(batteryTween2)
-					   .addIndicators({name: "tween battery 2"}) // add indicators (requires plugin)
 					   .addTo(this.controller);
     this.stickScene = new ScrollMagic.Scene({triggerElement: "#fixed", duration: 850, offset: 50})
-						.setPin("#device").addIndicators({name: "1 (duration: 300)"}).addTo(this.controller);
+						.setPin("#device")
+                        .addTo(this.controller);
     var switchTween = TweenMax.to("#switch", 1, {yPercent: "-92%"});
     this.switchScene = new ScrollMagic.Scene({triggerElement: "#switchTrigger", duration: 80})
 					   .setTween(switchTween)
-					   .addIndicators({name: "switch"}) // add indicators (requires plugin)
 					   .addTo(this.controller);
     var wifiAnimation = TweenMax.staggerFromTo(".wifiBar", 2, {opacity:0}, {opacity:1, repeat: -1}, 0.2);
     var wifiTween = TweenMax.fromTo(".wifiBar", 2, {display: "none"}, {display: "initial"});
     this.wifiScene = new ScrollMagic.Scene({triggerElement: "#switchTrigger", offset: 80})
-      .setTween(wifiTween)
-      .addIndicators({name: "wifi loop"}) // add indicators (requires plugin)
-      .addTo(this.controller);
+                      .setTween(wifiTween)
+                      .addTo(this.controller);
     this.menuScene = new ScrollMagic.Scene({triggerElement: "#menuTrigger"})
 					   .setClassToggle("#netDropDown", "showNet")
-					   .addIndicators({name: "menu"}) // add indicators (requires plugin)
 					   .addTo(this.controller);
     this.menuWifiScene = new ScrollMagic.Scene({triggerElement: "#menuTrigger", offset: 50})
                        .setClassToggle(".wifiHighlight", "plantWifi")
-					   .addIndicators({name: "menu2"}) // add indicators (requires plugin)
 					   .addTo(this.controller);
     var plantTween = TweenMax.to("#device", 1, {yPercent: 87, scale: 0.2});
     this.plantScene = new ScrollMagic.Scene({triggerElement: "#plantTrigger", duration: 100, offset: -100})
 					   .setTween(plantTween)
-					   .addIndicators({name: "plant the sensor"}) // add indicators (requires plugin)
 					   .addTo(this.controller);
   }
 
@@ -71,7 +65,7 @@ class AddPlant extends React.Component {
       AddPlantActions.invalidId();
       this.refs.sensorIDField.getDOMNode().focus();
     } else {
-      AppPlantActions.addSensor({router: this.context.router, email: sensor});
+      AddPlantActions.associateDevice({router: this.context.router, id: sensor});
     }
   }
   

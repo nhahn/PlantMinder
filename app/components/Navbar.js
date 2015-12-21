@@ -65,7 +65,7 @@ class Navbar extends React.Component {
     let links = "";
 
     if (this.state.loggedIn) {
-      loggedIn = <p className="navbar-text navbar-right"><a onClick={this.logout.bind(this)} className="navbar-link">Logout</a></p>; 
+      loggedIn = <p style={{marginRight: 15}} className="navbar-text navbar-right"><a onClick={this.logout.bind(this)} className="navbar-link">Logout</a></p>; 
       links = (
         <ul className='nav navbar-nav'>
           <NavLink to='/'>Home</NavLink>
@@ -76,7 +76,7 @@ class Navbar extends React.Component {
         </ul>
       );
     } else {
-      loggedIn = <p className="navbar-text navbar-right"><a href="/auth" className="navbar-link">Sign In</a></p>;
+      loggedIn = <p style={{marginRight: 15}} className="navbar-text navbar-right"><a href="/auth" className="navbar-link">Sign In</a></p>;
       links = (
         <ul className='nav navbar-nav'>
           <NavLink to='/'>Home</NavLink>

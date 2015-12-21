@@ -1,5 +1,5 @@
 import alt from '../alt';
-import AddPlantActions from '../actions/FlashActions';
+import AddPlantActions from '../actions/AddPlantActions';
 import {assign} from 'underscore';
 
 class AddPlantStore {
@@ -19,6 +19,18 @@ class AddPlantStore {
   onInvalidId() {
     this.idValidationState = 'has-error';
     this.helpBlock = 'Please enter a valid sensor ID';
+  }
+  
+  onAssociateSuccess(payload) {
+    //Redirect to our new plant!
+    setTimeout(() =>{ //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
+      payload.router.transitionTo('/plant/' + payload.id);
+    }, 1000);
+  }
+  
+  onAssociateFail(payload) {
+    this.idValidationState = 'has-error';
+    this.helpBlock = payload.errorMessage;
   }
 }
 

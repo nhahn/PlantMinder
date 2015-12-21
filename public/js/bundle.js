@@ -5,6 +5,8 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -15,16 +17,38 @@ var _alt2 = _interopRequireDefault(_alt);
 
 var _underscore = require('underscore');
 
-var AddPlantActions = function AddPlantActions() {
-  _classCallCheck(this, AddPlantActions);
+var AddPlantActions = (function () {
+  function AddPlantActions() {
+    _classCallCheck(this, AddPlantActions);
 
-  this.generateActions('invalidId', 'updateId');
-};
+    this.generateActions('updateId', 'invalidId', 'associateSuccess', 'associateFail');
+  }
+
+  _createClass(AddPlantActions, [{
+    key: 'associateDevice',
+    value: function associateDevice(payload) {
+      var _this = this;
+
+      $.ajax({
+        type: 'POST',
+        url: 'api/plants/associate',
+        data: { uuid: payload.id }
+      }).done(function (data) {
+        _this.actions.associateSuccess(payload);
+      }).fail(function (jqXhr) {
+        (0, _underscore.assign)(payload, { errorMessage: jqXhr.responseJSON.err });
+        _this.actions.associateFail(payload);
+      });
+    }
+  }]);
+
+  return AddPlantActions;
+})();
 
 exports['default'] = _alt2['default'].createActions(AddPlantActions);
 module.exports = exports['default'];
 
-},{"../alt":9,"underscore":"underscore"}],2:[function(require,module,exports){
+},{"../alt":10,"underscore":"underscore"}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -76,31 +100,7 @@ var AuthActions = (function () {
 exports['default'] = _alt2['default'].createActions(AuthActions);
 module.exports = exports['default'];
 
-},{"../alt":9,"underscore":"underscore"}],3:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var _alt = require('../alt');
-
-var _alt2 = _interopRequireDefault(_alt);
-
-var HomeActions = function HomeActions() {
-  _classCallCheck(this, HomeActions);
-
-  this.generateActions('clearNotification', 'addNotification', 'setNotifications');
-};
-
-exports['default'] = _alt2['default'].createActions(HomeActions);
-module.exports = exports['default'];
-
-},{"../alt":9}],4:[function(require,module,exports){
+},{"../alt":10,"underscore":"underscore"}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -124,7 +124,7 @@ var FooterActions = function FooterActions() {
 exports['default'] = _alt2['default'].createActions(FooterActions);
 module.exports = exports['default'];
 
-},{"../alt":9}],5:[function(require,module,exports){
+},{"../alt":10}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -148,7 +148,7 @@ var HomeActions = function HomeActions() {
 exports['default'] = _alt2['default'].createActions(HomeActions);
 module.exports = exports['default'];
 
-},{"../alt":9}],6:[function(require,module,exports){
+},{"../alt":10}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -208,7 +208,111 @@ var NavbarActions = (function () {
 exports['default'] = _alt2['default'].createActions(NavbarActions);
 module.exports = exports['default'];
 
-},{"../alt":9,"underscore":"underscore"}],7:[function(require,module,exports){
+},{"../alt":10,"underscore":"underscore"}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var _underscore = require('underscore');
+
+var PlantActions = function PlantActions() {
+  _classCallCheck(this, PlantActions);
+
+  this.generateActions();
+};
+
+exports['default'] = _alt2['default'].createActions(PlantActions);
+module.exports = exports['default'];
+
+},{"../alt":10,"underscore":"underscore"}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var _underscore = require('underscore');
+
+var PlantsActions = (function () {
+  function PlantsActions() {
+    _classCallCheck(this, PlantsActions);
+
+    this.generateActions('plantsGathered', 'plantsDropped', 'setCurrentLocation', 'imageUpdated', 'imageFailed', 'plantUpdateSuccess', 'plantUpdateFail');
+  }
+
+  _createClass(PlantsActions, [{
+    key: 'fetchPlants',
+    value: function fetchPlants() {
+      var _this = this;
+
+      $.ajax({
+        type: 'GET',
+        url: '/api/plants'
+      }).done(function (data) {
+        _this.actions.plantsGathered({ locations: data });
+      }).fail(function (jqXhr) {
+        _this.actions.plantsDropped({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }, {
+    key: 'updatePlant',
+    value: function updatePlant(location, plant, update) {
+      var _this2 = this;
+
+      $.ajax({
+        type: 'POST',
+        url: '/api/plants/' + location._id + '/' + plant._id + '/update',
+        data: update
+      }).done(function (data) {
+        _this2.actions.updateSuccess({ location: location, plant: data });
+      }).fail(function (jqXhr) {
+        _this2.actions.updateFail({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }, {
+    key: 'uploadImage',
+    value: function uploadImage(location, plant, image) {
+      var _this3 = this;
+
+      $.ajax({
+        type: 'PUT',
+        url: '/api/plants/' + location._id + '/' + plant._id + '/image',
+        data: { image: image }
+      }).done(function (data) {
+        _this3.actions.imageUpdated({ location: location, plant: plant, image: image });
+      }).fail(function (jqXhr) {
+        _this3.actions.imageFailed({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }]);
+
+  return PlantsActions;
+})();
+
+exports['default'] = _alt2['default'].createActions(PlantsActions);
+module.exports = exports['default'];
+
+},{"../alt":10,"underscore":"underscore"}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -287,7 +391,7 @@ var ProfileActions = (function () {
 exports['default'] = _alt2['default'].createActions(ProfileActions);
 module.exports = exports['default'];
 
-},{"../alt":9,"underscore":"underscore"}],8:[function(require,module,exports){
+},{"../alt":10,"underscore":"underscore"}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -342,7 +446,7 @@ var SignupActions = (function () {
 exports['default'] = _alt2['default'].createActions(SignupActions);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../alt":9,"underscore":"underscore"}],9:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../alt":10,"underscore":"underscore"}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -358,7 +462,7 @@ var _alt2 = _interopRequireDefault(_alt);
 exports['default'] = new _alt2['default']();
 module.exports = exports['default'];
 
-},{"alt":"alt"}],10:[function(require,module,exports){
+},{"alt":"alt"}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -404,30 +508,23 @@ var AddPlant = (function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             _storesAddPlantStore2['default'].listen(this.onChange);
-            this.controller = new ScrollMagic.Controller({ loglevel: 3, globalSceneOptions: {
+            this.controller = new ScrollMagic.Controller({ globalSceneOptions: {
                     triggerHook: 0.35
                 } });
             var batteryTween = TweenMax.to("#battery1", 1, { className: "+=battery-transition" });
-            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -150 }).setTween(batteryTween).addIndicators({ name: "tween battery" }) // add indicators (requires plugin)
-            .addTo(this.controller);
+            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -150 }).setTween(batteryTween).addTo(this.controller);
             var batteryTween2 = TweenMax.to("#battery2", 1, { className: "+=battery-transition" });
-            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -100 }).setTween(batteryTween2).addIndicators({ name: "tween battery 2" }) // add indicators (requires plugin)
-            .addTo(this.controller);
-            this.stickScene = new ScrollMagic.Scene({ triggerElement: "#fixed", duration: 850, offset: 50 }).setPin("#device").addIndicators({ name: "1 (duration: 300)" }).addTo(this.controller);
+            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -100 }).setTween(batteryTween2).addTo(this.controller);
+            this.stickScene = new ScrollMagic.Scene({ triggerElement: "#fixed", duration: 850, offset: 50 }).setPin("#device").addTo(this.controller);
             var switchTween = TweenMax.to("#switch", 1, { yPercent: "-92%" });
-            this.switchScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", duration: 80 }).setTween(switchTween).addIndicators({ name: "switch" }) // add indicators (requires plugin)
-            .addTo(this.controller);
+            this.switchScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", duration: 80 }).setTween(switchTween).addTo(this.controller);
             var wifiAnimation = TweenMax.staggerFromTo(".wifiBar", 2, { opacity: 0 }, { opacity: 1, repeat: -1 }, 0.2);
             var wifiTween = TweenMax.fromTo(".wifiBar", 2, { display: "none" }, { display: "initial" });
-            this.wifiScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", offset: 80 }).setTween(wifiTween).addIndicators({ name: "wifi loop" }) // add indicators (requires plugin)
-            .addTo(this.controller);
-            this.menuScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger" }).setClassToggle("#netDropDown", "showNet").addIndicators({ name: "menu" }) // add indicators (requires plugin)
-            .addTo(this.controller);
-            this.menuWifiScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger", offset: 50 }).setClassToggle(".wifiHighlight", "plantWifi").addIndicators({ name: "menu2" }) // add indicators (requires plugin)
-            .addTo(this.controller);
+            this.wifiScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", offset: 80 }).setTween(wifiTween).addTo(this.controller);
+            this.menuScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger" }).setClassToggle("#netDropDown", "showNet").addTo(this.controller);
+            this.menuWifiScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger", offset: 50 }).setClassToggle(".wifiHighlight", "plantWifi").addTo(this.controller);
             var plantTween = TweenMax.to("#device", 1, { yPercent: 87, scale: 0.2 });
-            this.plantScene = new ScrollMagic.Scene({ triggerElement: "#plantTrigger", duration: 100, offset: -100 }).setTween(plantTween).addIndicators({ name: "plant the sensor" }) // add indicators (requires plugin)
-            .addTo(this.controller);
+            this.plantScene = new ScrollMagic.Scene({ triggerElement: "#plantTrigger", duration: 100, offset: -100 }).setTween(plantTween).addTo(this.controller);
         }
     }, {
         key: 'componentWillUnmount',
@@ -450,7 +547,7 @@ var AddPlant = (function (_React$Component) {
                 _actionsAddPlantActions2['default'].invalidId();
                 this.refs.sensorIDField.getDOMNode().focus();
             } else {
-                AppPlantActions.addSensor({ router: this.context.router, email: sensor });
+                _actionsAddPlantActions2['default'].associateDevice({ router: this.context.router, id: sensor });
             }
         }
     }, {
@@ -814,7 +911,7 @@ exports['default'] = AddPlant;
 module.exports = exports['default'];
 /*Battery Animation*/ /*Switch Animation*/ /*Network Animation*/
 
-},{"../actions/AddPlantActions":1,"../stores/AddPlantStore":28,"react":"react","underscore":"underscore"}],11:[function(require,module,exports){
+},{"../actions/AddPlantActions":1,"../stores/AddPlantStore":30,"react":"react","underscore":"underscore"}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -949,7 +1046,7 @@ App.contextTypes = {
 exports['default'] = App;
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":5,"../stores/AuthStore":29,"./Footer":14,"./Navbar":17,"react":"react","react-router":"react-router","underscore":"underscore"}],12:[function(require,module,exports){
+},{"../actions/HomeActions":4,"../stores/AuthStore":31,"./Footer":15,"./Navbar":18,"react":"react","react-router":"react-router","underscore":"underscore"}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1180,7 +1277,7 @@ Auth.contextTypes = {
 exports['default'] = Auth;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../stores/AuthStore":29,"react":"react","underscore":"underscore"}],13:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../stores/AuthStore":31,"react":"react","underscore":"underscore"}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1240,7 +1337,7 @@ var Feedback = (function (_React$Component) {
 exports['default'] = Feedback;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],14:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1380,7 +1477,7 @@ var Footer = (function (_React$Component) {
 exports['default'] = Footer;
 module.exports = exports['default'];
 
-},{"../actions/FooterActions":4,"../stores/FooterStore":30,"react":"react","react-router":"react-router"}],15:[function(require,module,exports){
+},{"../actions/FooterActions":3,"../stores/FooterStore":32,"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1528,7 +1625,7 @@ var Home = (function (_React$Component) {
 exports['default'] = Home;
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":5,"../stores/HomeStore":31,"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
+},{"../actions/HomeActions":4,"../stores/HomeStore":33,"react":"react","react-router":"react-router"}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1701,7 +1798,7 @@ InlineEdit.propTypes = {
 exports['default'] = InlineEdit;
 module.exports = exports['default'];
 
-},{"react":"react"}],17:[function(require,module,exports){
+},{"react":"react"}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1821,7 +1918,7 @@ var Navbar = (function (_React$Component) {
       if (this.state.loggedIn) {
         loggedIn = _react2['default'].createElement(
           'p',
-          { className: 'navbar-text navbar-right' },
+          { style: { marginRight: 15 }, className: 'navbar-text navbar-right' },
           _react2['default'].createElement(
             'a',
             { onClick: this.logout.bind(this), className: 'navbar-link' },
@@ -1860,7 +1957,7 @@ var Navbar = (function (_React$Component) {
       } else {
         loggedIn = _react2['default'].createElement(
           'p',
-          { className: 'navbar-text navbar-right' },
+          { style: { marginRight: 15 }, className: 'navbar-text navbar-right' },
           _react2['default'].createElement(
             'a',
             { href: '/auth', className: 'navbar-link' },
@@ -1945,7 +2042,148 @@ Navbar.contextTypes = {
 exports['default'] = Navbar;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../actions/HomeActions":5,"../actions/NavbarActions":6,"../stores/AuthStore":29,"../stores/HomeStore":31,"../stores/NavbarStore":32,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],18:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../actions/HomeActions":4,"../actions/NavbarActions":5,"../stores/AuthStore":31,"../stores/HomeStore":33,"../stores/NavbarStore":34,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],19:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _storesPlantStore = require('../stores/PlantStore');
+
+var _storesPlantStore2 = _interopRequireDefault(_storesPlantStore);
+
+var _actionsPlantActions = require('../actions/PlantActions');
+
+var _actionsPlantActions2 = _interopRequireDefault(_actionsPlantActions);
+
+var _actionsPlantsActions = require('../actions/PlantsActions');
+
+var _actionsPlantsActions2 = _interopRequireDefault(_actionsPlantsActions);
+
+var _underscore = require('underscore');
+
+var _reactDropzone = require('react-dropzone');
+
+var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
+
+var Plant = (function (_React$Component) {
+  _inherits(Plant, _React$Component);
+
+  function Plant(props) {
+    var _this = this;
+
+    _classCallCheck(this, Plant);
+
+    _get(Object.getPrototypeOf(Plant.prototype), 'constructor', this).call(this, props);
+    this.plant = (0, _underscore.find)(props.plants, function (plant) {
+      return plant.device.uuid == _this.props.params.id;
+    });
+    this.filler = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTFjMTY2NzVkMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MWMxNjY3NWQxIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=";
+    this.state = _storesPlantStore2['default'].getState();
+    this.onChange = this.onChange.bind(this);
+  }
+
+  _createClass(Plant, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      _storesPlantStore2['default'].listen(this.onChange);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _this2 = this;
+
+      this.plant = (0, _underscore.findWhere)(nextProps.plants, function (plant) {
+        return plant.device.uuid == _this2.props.params.id;
+      });
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      _storesPlantStore2['default'].unlisten(this.onChange);
+    }
+  }, {
+    key: 'onDrop',
+    value: function onDrop(files) {
+      //Convert to bas64, resize, and then upload
+      var self = this;
+      var width = 200;
+      var height = 200;
+      files[0].convertToBase64(function (base64) {
+        var canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        var context = canvas.getContext("2d");
+        $("<img/>").attr("src", base64).load(function () {
+          context.scale(width / this.width, height / this.height);
+          context.drawImage(this, 0, 0);
+          _actionsPlantsActions2['default'].uploadImage(self.props.location, self.plant, canvas.toDataURL());
+        });
+      });
+    }
+  }, {
+    key: 'onChange',
+    value: function onChange(state) {
+      this.setState(state);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+
+      return _react2['default'].createElement(
+        'div',
+        { className: 'row' },
+        _react2['default'].createElement(
+          'div',
+          { className: 'col-sm-3' },
+          _react2['default'].createElement(
+            _reactDropzone2['default'],
+            { className: 'imageDropZone', activeClassName: 'imageDropZoneActive', onDrop: this.onDrop.bind(this), accept: 'image/*', multiple: false },
+            _react2['default'].createElement('img', { draggable: 'false', src: this.plant.image ? this.plant.image : this.filler, className: 'img-thumbnail img-responsive' })
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'col-sm-7' },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Name: ',
+            this.plant.name
+          ),
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Type: ',
+            this.plant.type
+          )
+        )
+      );
+    }
+  }]);
+
+  return Plant;
+})(_react2['default'].Component);
+
+exports['default'] = Plant;
+module.exports = exports['default'];
+
+},{"../actions/PlantActions":6,"../actions/PlantsActions":7,"../stores/PlantStore":35,"react":"react","react-dropzone":39,"underscore":"underscore"}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1967,6 +2205,8 @@ var _react = require('react');
 var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = require('react-router');
+
+//var CSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var PlantList = (function (_React$Component) {
   _inherits(PlantList, _React$Component);
@@ -1995,7 +2235,50 @@ var PlantList = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      return _react2['default'].createElement('div', { className: 'container' });
+      var filler = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTFjMTY2NzVkMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MWMxNjY3NWQxIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=";
+
+      var plants = this.props.plants.map(function (plant, index) {
+        return _react2['default'].createElement(
+          _reactRouter.Link,
+          { to: '/plant/:id', key: plant._id, params: { id: plant.device.uuid }, className: 'list-group-item' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'row' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'col-xs-3' },
+              _react2['default'].createElement('img', { src: plant.image ? plant.image : filler, className: 'img-thumbnail img-responsive' })
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'col-xs-9' },
+              _react2['default'].createElement(
+                'h4',
+                { className: 'list-group-item-heading' },
+                plant.name
+              ),
+              _react2['default'].createElement(
+                'p',
+                { className: 'list-group-item-text' },
+                'Type: ',
+                plant.type
+              ),
+              _react2['default'].createElement(
+                'p',
+                { className: 'list-group-item-text' },
+                'Device: ',
+                plant.device.uuid
+              )
+            )
+          )
+        );
+      });
+
+      return _react2['default'].createElement(
+        'div',
+        { classNam: 'list-group' },
+        plants
+      );
     }
   }]);
 
@@ -2005,7 +2288,7 @@ var PlantList = (function (_React$Component) {
 exports['default'] = PlantList;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],19:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2028,6 +2311,18 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = require('react-router');
 
+var _storesPlantsStore = require('../stores/PlantsStore');
+
+var _storesPlantsStore2 = _interopRequireDefault(_storesPlantsStore);
+
+var _actionsPlantsActions = require('../actions/PlantsActions');
+
+var _actionsPlantsActions2 = _interopRequireDefault(_actionsPlantsActions);
+
+var _reactRouterActiveComponent = require('react-router-active-component');
+
+var _reactRouterActiveComponent2 = _interopRequireDefault(_reactRouterActiveComponent);
+
 var Plants = (function (_React$Component) {
   _inherits(Plants, _React$Component);
 
@@ -2035,17 +2330,22 @@ var Plants = (function (_React$Component) {
     _classCallCheck(this, Plants);
 
     _get(Object.getPrototypeOf(Plants.prototype), 'constructor', this).call(this, props);
+    this.state = _storesPlantsStore2['default'].getState();
+    this.onChange = this.onChange.bind(this);
   }
 
   _createClass(Plants, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      //FooterStore.listen(this.onChange);
+      _storesPlantsStore2['default'].listen(this.onChange);
+      $(function () {
+        _actionsPlantsActions2['default'].fetchPlants();
+      });
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      //FooterStore.unlisten(this.onChange);
+      _storesPlantsStore2['default'].unlisten(this.onChange);
     }
   }, {
     key: 'onChange',
@@ -2055,10 +2355,80 @@ var Plants = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this = this;
+
+      var NavLink = (0, _reactRouterActiveComponent2['default'])('li');
+      var locations = this.state.locations.map(function (location, index) {
+        return _react2['default'].createElement(
+          'li',
+          { role: 'presentation', key: location._id, className: _this.state.currentLocation == location ? "active" : "" },
+          _react2['default'].createElement(
+            'a',
+            { onClick: _actionsPlantsActions2['default'].setCurrentLocation.bind(_this, location) },
+            location.name
+          )
+        );
+      });
+
       return _react2['default'].createElement(
         'div',
         { className: 'container' },
-        this.props.children
+        _react2['default'].createElement(
+          'div',
+          { className: 'row' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-3' },
+            _react2['default'].createElement(
+              'h3',
+              null,
+              'Locations'
+            ),
+            _react2['default'].createElement(
+              'ul',
+              { className: 'nav nav-pills nav-stacked' },
+              locations
+            ),
+            _react2['default'].createElement('br', null)
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-9' },
+            _react2['default'].createElement(
+              'h3',
+              null,
+              'Your Plants'
+            ),
+            (function () {
+              if (_this.state.locations.length > 0) return _react2['default'].createElement(_reactRouter.RouteHandler, { location: _this.state.currentLocation, plants: _this.state.currentLocation.plants });else return _react2['default'].createElement(
+                'div',
+                { className: 'thumbnail fadeInUp animated row' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'col-xs-12' },
+                  _react2['default'].createElement(
+                    'h4',
+                    null,
+                    'Loading Plants'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'progress' },
+                    _react2['default'].createElement(
+                      'div',
+                      { className: 'progress-bar progress-bar-striped active', role: 'progressbar', 'aria-valuenow': '100', 'aria-valuemin': '0', 'aria-valuemax': '100', style: { width: "100%" } },
+                      _react2['default'].createElement(
+                        'span',
+                        { className: 'sr-only' },
+                        'In Progress'
+                      )
+                    )
+                  )
+                )
+              );
+            })()
+          )
+        )
       );
     }
   }]);
@@ -2069,7 +2439,7 @@ var Plants = (function (_React$Component) {
 exports['default'] = Plants;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],20:[function(require,module,exports){
+},{"../actions/PlantsActions":7,"../stores/PlantsStore":36,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2225,7 +2595,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":7,"../stores/ProfileStore":33,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],21:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"../stores/ProfileStore":37,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2274,7 +2644,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":7,"react":"react","react-router":"react-router"}],22:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"react":"react","react-router":"react-router"}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2323,7 +2693,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":7,"react":"react","react-router":"react-router"}],23:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"react":"react","react-router":"react-router"}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2418,7 +2788,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":7,"./InlineEdit":16,"react":"react","react-router":"react-router"}],24:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"./InlineEdit":17,"react":"react","react-router":"react-router"}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2647,7 +3017,7 @@ Signup.contextTypes = {
 exports['default'] = Signup;
 module.exports = exports['default'];
 
-},{"../actions/SignupActions":8,"../stores/SignupStore":34,"react":"react","underscore":"underscore"}],25:[function(require,module,exports){
+},{"../actions/SignupActions":9,"../stores/SignupStore":38,"react":"react","underscore":"underscore"}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2769,7 +3139,7 @@ var guardRouteAsync = function guardRouteAsync(fn, Component, _ref2) {
 exports.GuardRoute = guardRoute;
 exports.GuardRouteAsync = guardRouteAsync;
 
-},{"react":"react"}],26:[function(require,module,exports){
+},{"react":"react"}],28:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -2794,6 +3164,14 @@ if (window.ReactGlobals.token) {
   localStorage.setItem('token', window.ReactGlobals.token);
 }
 
+File.prototype.convertToBase64 = function (callback) {
+  var FR = new FileReader();
+  FR.onload = function (e) {
+    callback(e.target.result);
+  };
+  FR.readAsDataURL(this);
+};
+
 _alt2['default'].bootstrap(JSON.stringify({
   AuthStore: {
     token: localStorage.getItem('token') || '',
@@ -2806,7 +3184,7 @@ _reactRouter2['default'].run(_routes2['default'], _reactRouter2['default'].Histo
   _react2['default'].render(_react2['default'].createElement(Handler, null), document.getElementById('app'));
 });
 
-},{"./alt":9,"./routes":27,"react":"react","react-router":"react-router"}],27:[function(require,module,exports){
+},{"./alt":10,"./routes":29,"react":"react","react-router":"react-router"}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2852,6 +3230,10 @@ var _componentsPlants2 = _interopRequireDefault(_componentsPlants);
 var _componentsPlantList = require('./components/PlantList');
 
 var _componentsPlantList2 = _interopRequireDefault(_componentsPlantList);
+
+var _componentsPlant = require('./components/Plant');
+
+var _componentsPlant2 = _interopRequireDefault(_componentsPlant);
 
 var _componentsFeedback = require('./components/Feedback');
 
@@ -2907,11 +3289,12 @@ var routes = _react2['default'].createElement(
     _react2['default'].createElement(_reactRouter.Route, { path: 'google/callback', handler: _componentsHome2['default'] }),
     _react2['default'].createElement(_reactRouter.Route, { path: 'facebook/callback', handler: _componentsHome2['default'] })
   ),
-  _react2['default'].createElement(_reactRouter.Route, { path: '/addPlant', handler: _componentsAddPlant2['default'] }),
+  _react2['default'].createElement(_reactRouter.Route, { path: 'addPlant', handler: _componentsAddPlant2['default'] }),
   _react2['default'].createElement(
     _reactRouter.Route,
     { path: 'plants', handler: _componentsPlants2['default'] },
-    _react2['default'].createElement(_reactRouter.DefaultRoute, { handler: _componentsPlantList2['default'] })
+    _react2['default'].createElement(_reactRouter.DefaultRoute, { handler: _componentsPlantList2['default'] }),
+    _react2['default'].createElement(_reactRouter.Route, { path: '/plant/:id', handler: _componentsPlant2['default'] })
   ),
   _react2['default'].createElement(
     _reactRouter.Route,
@@ -2926,7 +3309,7 @@ var routes = _react2['default'].createElement(
 exports['default'] = routes;
 module.exports = exports['default'];
 
-},{"./components/AddPlant":10,"./components/App":11,"./components/Auth":12,"./components/Feedback":13,"./components/Home":15,"./components/PlantList":18,"./components/Plants":19,"./components/Profile":20,"./components/ProfileEdit":21,"./components/ProfileNotifications":22,"./components/ProfileOverview":23,"./components/Signup":24,"./guards":25,"./stores/AuthStore":29,"react":"react","react-router":"react-router","underscore":"underscore"}],28:[function(require,module,exports){
+},{"./components/AddPlant":11,"./components/App":12,"./components/Auth":13,"./components/Feedback":14,"./components/Home":16,"./components/Plant":19,"./components/PlantList":20,"./components/Plants":21,"./components/Profile":22,"./components/ProfileEdit":23,"./components/ProfileNotifications":24,"./components/ProfileOverview":25,"./components/Signup":26,"./guards":27,"./stores/AuthStore":31,"react":"react","react-router":"react-router","underscore":"underscore"}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2943,9 +3326,9 @@ var _alt = require('../alt');
 
 var _alt2 = _interopRequireDefault(_alt);
 
-var _actionsFlashActions = require('../actions/FlashActions');
+var _actionsAddPlantActions = require('../actions/AddPlantActions');
 
-var _actionsFlashActions2 = _interopRequireDefault(_actionsFlashActions);
+var _actionsAddPlantActions2 = _interopRequireDefault(_actionsAddPlantActions);
 
 var _underscore = require('underscore');
 
@@ -2953,7 +3336,7 @@ var AddPlantStore = (function () {
   function AddPlantStore() {
     _classCallCheck(this, AddPlantStore);
 
-    this.bindActions(_actionsFlashActions2['default']);
+    this.bindActions(_actionsAddPlantActions2['default']);
     this.sensorID = '';
     this.idValidationState = '';
     this.helpBlock = '';
@@ -2972,6 +3355,21 @@ var AddPlantStore = (function () {
       this.idValidationState = 'has-error';
       this.helpBlock = 'Please enter a valid sensor ID';
     }
+  }, {
+    key: 'onAssociateSuccess',
+    value: function onAssociateSuccess(payload) {
+      //Redirect to our new plant!
+      setTimeout(function () {
+        //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
+        payload.router.transitionTo('/plant/' + payload.id);
+      }, 1000);
+    }
+  }, {
+    key: 'onAssociateFail',
+    value: function onAssociateFail(payload) {
+      this.idValidationState = 'has-error';
+      this.helpBlock = payload.errorMessage;
+    }
   }]);
 
   return AddPlantStore;
@@ -2980,7 +3378,7 @@ var AddPlantStore = (function () {
 exports['default'] = _alt2['default'].createStore(AddPlantStore);
 module.exports = exports['default'];
 
-},{"../actions/FlashActions":3,"../alt":9,"underscore":"underscore"}],29:[function(require,module,exports){
+},{"../actions/AddPlantActions":1,"../alt":10,"underscore":"underscore"}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3090,7 +3488,7 @@ var AuthStore = (function () {
 exports['default'] = _alt2['default'].createStore(AuthStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../alt":9}],30:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../alt":10}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3118,7 +3516,7 @@ var FooterStore = function FooterStore() {
 exports['default'] = _alt2['default'].createStore(FooterStore);
 module.exports = exports['default'];
 
-},{"../actions/FooterActions":4,"../alt":9}],31:[function(require,module,exports){
+},{"../actions/FooterActions":3,"../alt":10}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3146,7 +3544,7 @@ var HomeStore = function HomeStore() {
 exports['default'] = _alt2['default'].createStore(HomeStore);
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":5,"../alt":9}],32:[function(require,module,exports){
+},{"../actions/HomeActions":4,"../alt":10}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3224,7 +3622,120 @@ var NavbarStore = (function () {
 exports['default'] = _alt2['default'].createStore(NavbarStore);
 module.exports = exports['default'];
 
-},{"../actions/NavbarActions":6,"../alt":9}],33:[function(require,module,exports){
+},{"../actions/NavbarActions":5,"../alt":10}],35:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var _actionsPlantActions = require('../actions/PlantActions');
+
+var _actionsPlantActions2 = _interopRequireDefault(_actionsPlantActions);
+
+var _underscore = require('underscore');
+
+var PlantStore = function PlantStore() {
+  _classCallCheck(this, PlantStore);
+
+  this.bindActions(_actionsPlantActions2['default']);
+};
+
+exports['default'] = _alt2['default'].createStore(PlantStore);
+module.exports = exports['default'];
+
+},{"../actions/PlantActions":6,"../alt":10,"underscore":"underscore"}],36:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alt = require('../alt');
+
+var _alt2 = _interopRequireDefault(_alt);
+
+var _actionsPlantsActions = require('../actions/PlantsActions');
+
+var _actionsPlantsActions2 = _interopRequireDefault(_actionsPlantsActions);
+
+var _underscore = require('underscore');
+
+var PlantsStore = (function () {
+  function PlantsStore() {
+    _classCallCheck(this, PlantsStore);
+
+    this.bindActions(_actionsPlantsActions2['default']);
+    this.locations = [];
+    this.currentLocation = null;
+    this.loadError = '';
+  }
+
+  _createClass(PlantsStore, [{
+    key: 'onPlantsGathered',
+    value: function onPlantsGathered(payload) {
+      this.locations = payload.locations;
+      this.currentLocation = this.locations[0];
+    }
+  }, {
+    key: 'onPlantsDropped',
+    value: function onPlantsDropped(err) {
+      this.loadError = err.errorMessage;
+    }
+  }, {
+    key: 'onSetCurrentLocation',
+    value: function onSetCurrentLocation(location) {
+      this.currentLocation = location;
+    }
+  }, {
+    key: 'onImageUpdated',
+    value: function onImageUpdated(payload) {
+      var location = (0, _underscore.findWhere)(this.locations, { _id: payload.location._id });
+      var plant = (0, _underscore.findIndex)(location.plants, { _id: payload.plant._id });
+      location.plants[plant].image = payload.image;
+    }
+  }, {
+    key: 'onImageFailed',
+    value: function onImageFailed(err) {
+      this.loadError = err.errorMessage;
+    }
+  }, {
+    key: 'onPlantUpdateSuccess',
+    value: function onPlantUpdateSuccess(payload) {
+      var location = (0, _underscore.findWhere)(this.locations, { _id: payload.location._id });
+      var plant = (0, _underscore.findIndex)(location.plants, { _id: payload.plant._id });
+
+      payload.image = location.plants[plant].image;
+      location.plants[plant] = payload.plant;
+    }
+  }, {
+    key: 'onPlantUpdateFail',
+    value: function onPlantUpdateFail(err) {
+      this.loadError = err.errorMessage;
+    }
+  }]);
+
+  return PlantsStore;
+})();
+
+exports['default'] = _alt2['default'].createStore(PlantsStore);
+module.exports = exports['default'];
+
+},{"../actions/PlantsActions":7,"../alt":10,"underscore":"underscore"}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3261,6 +3772,11 @@ var ProfileStore = (function () {
     key: 'onUpdateUser',
     value: function onUpdateUser(payload) {
       if (this.user) this.deepExtend(this.user, payload.user);else this.user = payload.user;
+    }
+  }, {
+    key: 'updateUserFail',
+    value: function updateUserFail(err) {
+      console.log(err.errorMessage);
     }
   }, {
     key: 'deepExtend',
@@ -3306,7 +3822,7 @@ var ProfileStore = (function () {
 exports['default'] = _alt2['default'].createStore(ProfileStore);
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":7,"../alt":9,"underscore":"underscore"}],34:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"../alt":10,"underscore":"underscore"}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3443,4 +3959,224 @@ var SignupStore = (function () {
 exports['default'] = _alt2['default'].createStore(SignupStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../actions/SignupActions":8,"../alt":9}]},{},[26]);
+},{"../actions/AuthActions":2,"../actions/SignupActions":9,"../alt":10}],39:[function(require,module,exports){
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var React = require('react');
+var accept = require('attr-accept');
+
+var Dropzone = React.createClass({
+  displayName: 'Dropzone',
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      disableClick: false,
+      multiple: true
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      isDragActive: false
+    };
+  },
+
+  propTypes: {
+    onDrop: React.PropTypes.func,
+    onDropAccepted: React.PropTypes.func,
+    onDropRejected: React.PropTypes.func,
+    onDragEnter: React.PropTypes.func,
+    onDragLeave: React.PropTypes.func,
+
+    style: React.PropTypes.object,
+    activeStyle: React.PropTypes.object,
+    className: React.PropTypes.string,
+    activeClassName: React.PropTypes.string,
+    rejectClassName: React.PropTypes.string,
+
+    disableClick: React.PropTypes.bool,
+    multiple: React.PropTypes.bool,
+    accept: React.PropTypes.string
+  },
+
+  componentDidMount: function componentDidMount() {
+    this.enterCounter = 0;
+  },
+
+  allFilesAccepted: function allFilesAccepted(files) {
+    var _this = this;
+
+    return files.every(function (file) {
+      return accept(file, _this.props.accept);
+    });
+  },
+
+  onDragEnter: function onDragEnter(e) {
+    e.preventDefault();
+
+    // Count the dropzone and any children that are entered.
+    ++this.enterCounter;
+
+    // This is tricky. During the drag even the dataTransfer.files is null
+    // But Chrome implements some drag store, which is accesible via dataTransfer.items
+    var dataTransferItems = e.dataTransfer && e.dataTransfer.items ? e.dataTransfer.items : [];
+
+    // Now we need to convert the DataTransferList to Array
+    var itemsArray = Array.prototype.slice.call(dataTransferItems);
+    var allFilesAccepted = this.allFilesAccepted(itemsArray);
+
+    this.setState({
+      isDragActive: allFilesAccepted,
+      isDragReject: !allFilesAccepted
+    });
+
+    if (this.props.onDragEnter) {
+      this.props.onDragEnter(e);
+    }
+  },
+
+  onDragOver: function onDragOver(e) {
+    e.preventDefault();
+  },
+
+  onDragLeave: function onDragLeave(e) {
+    e.preventDefault();
+
+    // Only deactivate once the dropzone and all children was left.
+    if (--this.enterCounter > 0) {
+      return;
+    }
+
+    this.setState({
+      isDragActive: false,
+      isDragReject: false
+    });
+
+    if (this.props.onDragLeave) {
+      this.props.onDragLeave(e);
+    }
+  },
+
+  onDrop: function onDrop(e) {
+    e.preventDefault();
+
+    // Reset the counter along with the drag on a drop.
+    this.enterCounter = 0;
+
+    this.setState({
+      isDragActive: false,
+      isDragReject: false
+    });
+
+    var droppedFiles = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+    var max = this.props.multiple ? droppedFiles.length : 1;
+    var files = [];
+
+    for (var i = 0; i < max; i++) {
+      var file = droppedFiles[i];
+      file.preview = URL.createObjectURL(file);
+      files.push(file);
+    }
+
+    if (this.props.onDrop) {
+      this.props.onDrop(files, e);
+    }
+
+    if (this.allFilesAccepted(files)) {
+      if (this.props.onDropAccepted) {
+        this.props.onDropAccepted(files, e);
+      }
+    } else {
+      if (this.props.onDropRejected) {
+        this.props.onDropRejected(files, e);
+      }
+    }
+  },
+
+  onClick: function onClick() {
+    if (!this.props.disableClick) {
+      this.open();
+    }
+  },
+
+  open: function open() {
+    var fileInput = React.findDOMNode(this.refs.fileInput);
+    fileInput.value = null;
+    fileInput.click();
+  },
+
+  render: function render() {
+
+    var className;
+    if (this.props.className) {
+      className = this.props.className;
+      if (this.state.isDragActive && this.props.activeClassName) {
+        className += ' ' + this.props.activeClassName;
+      };
+      if (this.state.isDragReject && this.props.rejectClassName) {
+        className += ' ' + this.props.rejectClassName;
+      };
+    };
+
+    var style, activeStyle;
+    if (this.props.style || this.props.activeStyle) {
+      if (this.props.style) {
+        style = this.props.style;
+      }
+      if (this.props.activeStyle) {
+        activeStyle = this.props.activeStyle;
+      }
+    } else if (!className) {
+      style = {
+        width: 200,
+        height: 200,
+        borderWidth: 2,
+        borderColor: '#666',
+        borderStyle: 'dashed',
+        borderRadius: 5
+      };
+      activeStyle = {
+        borderStyle: 'solid',
+        backgroundColor: '#eee'
+      };
+    }
+
+    var appliedStyle;
+    if (activeStyle && this.state.isDragActive) {
+      appliedStyle = _extends({}, style, activeStyle);
+    } else {
+      appliedStyle = _extends({}, style);
+    };
+
+    return React.createElement(
+      'div',
+      {
+        className: className,
+        style: appliedStyle,
+        onClick: this.onClick,
+        onDragEnter: this.onDragEnter,
+        onDragOver: this.onDragOver,
+        onDragLeave: this.onDragLeave,
+        onDrop: this.onDrop
+      },
+      this.props.children,
+      React.createElement('input', {
+        type: 'file',
+        ref: 'fileInput',
+        style: { display: 'none' },
+        multiple: this.props.multiple,
+        accept: this.props.accept,
+        onChange: this.onDrop
+      })
+    );
+  }
+
+});
+
+module.exports = Dropzone;
+
+},{"attr-accept":40,"react":"react"}],40:[function(require,module,exports){
+module.exports=function(t){function n(e){if(r[e])return r[e].exports;var o=r[e]={exports:{},id:e,loaded:!1};return t[e].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var r={};return n.m=t,n.c=r,n.p="",n(0)}([function(t,n,r){"use strict";n.__esModule=!0,r(8),r(9),n["default"]=function(t,n){if(t&&n){var r=function(){var r=n.split(","),e=t.name||"",o=t.type||"",i=o.replace(/\/.*$/,"");return{v:r.some(function(t){var n=t.trim();return"."===n.charAt(0)?e.toLowerCase().endsWith(n.toLowerCase()):/\/\*$/.test(n)?i===n.replace(/\/.*$/,""):o===n})}}();if("object"==typeof r)return r.v}return!0},t.exports=n["default"]},function(t,n){var r=t.exports={version:"1.2.2"};"number"==typeof __e&&(__e=r)},function(t,n){var r=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=r)},function(t,n,r){var e=r(2),o=r(1),i=r(4),u=r(19),c="prototype",f=function(t,n){return function(){return t.apply(n,arguments)}},s=function(t,n,r){var a,p,l,d,y=t&s.G,h=t&s.P,v=y?e:t&s.S?e[n]||(e[n]={}):(e[n]||{})[c],x=y?o:o[n]||(o[n]={});y&&(r=n);for(a in r)p=!(t&s.F)&&v&&a in v,l=(p?v:r)[a],d=t&s.B&&p?f(l,e):h&&"function"==typeof l?f(Function.call,l):l,v&&!p&&u(v,a,l),x[a]!=l&&i(x,a,d),h&&((x[c]||(x[c]={}))[a]=l)};e.core=o,s.F=1,s.G=2,s.S=4,s.P=8,s.B=16,s.W=32,t.exports=s},function(t,n,r){var e=r(5),o=r(18);t.exports=r(22)?function(t,n,r){return e.setDesc(t,n,o(1,r))}:function(t,n,r){return t[n]=r,t}},function(t,n){var r=Object;t.exports={create:r.create,getProto:r.getPrototypeOf,isEnum:{}.propertyIsEnumerable,getDesc:r.getOwnPropertyDescriptor,setDesc:r.defineProperty,setDescs:r.defineProperties,getKeys:r.keys,getNames:r.getOwnPropertyNames,getSymbols:r.getOwnPropertySymbols,each:[].forEach}},function(t,n){var r=0,e=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++r+e).toString(36))}},function(t,n,r){var e=r(20)("wks"),o=r(2).Symbol;t.exports=function(t){return e[t]||(e[t]=o&&o[t]||(o||r(6))("Symbol."+t))}},function(t,n,r){r(26),t.exports=r(1).Array.some},function(t,n,r){r(25),t.exports=r(1).String.endsWith},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){var r={}.toString;t.exports=function(t){return r.call(t).slice(8,-1)}},function(t,n,r){var e=r(10);t.exports=function(t,n,r){if(e(t),void 0===n)return t;switch(r){case 1:return function(r){return t.call(n,r)};case 2:return function(r,e){return t.call(n,r,e)};case 3:return function(r,e,o){return t.call(n,r,e,o)}}return function(){return t.apply(n,arguments)}}},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n,r){t.exports=function(t){var n=/./;try{"/./"[t](n)}catch(e){try{return n[r(7)("match")]=!1,!"/./"[t](n)}catch(o){}}return!0}},function(t,n){t.exports=function(t){try{return!!t()}catch(n){return!0}}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n,r){var e=r(16),o=r(11),i=r(7)("match");t.exports=function(t){var n;return e(t)&&(void 0!==(n=t[i])?!!n:"RegExp"==o(t))}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n,r){var e=r(2),o=r(4),i=r(6)("src"),u="toString",c=Function[u],f=(""+c).split(u);r(1).inspectSource=function(t){return c.call(t)},(t.exports=function(t,n,r,u){"function"==typeof r&&(o(r,i,t[n]?""+t[n]:f.join(String(n))),"name"in r||(r.name=n)),t===e?t[n]=r:(u||delete t[n],o(t,n,r))})(Function.prototype,u,function(){return"function"==typeof this&&this[i]||c.call(this)})},function(t,n,r){var e=r(2),o="__core-js_shared__",i=e[o]||(e[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n,r){var e=r(17),o=r(13);t.exports=function(t,n,r){if(e(n))throw TypeError("String#"+r+" doesn't accept regex!");return String(o(t))}},function(t,n,r){t.exports=!r(15)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n){var r=Math.ceil,e=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?e:r)(t)}},function(t,n,r){var e=r(23),o=Math.min;t.exports=function(t){return t>0?o(e(t),9007199254740991):0}},function(t,n,r){"use strict";var e=r(3),o=r(24),i=r(21),u="endsWith",c=""[u];e(e.P+e.F*r(14)(u),"String",{endsWith:function(t){var n=i(this,t,u),r=arguments,e=r.length>1?r[1]:void 0,f=o(n.length),s=void 0===e?f:Math.min(o(e),f),a=String(t);return c?c.call(n,a,s):n.slice(s-a.length,s)===a}})},function(t,n,r){var e=r(5),o=r(3),i=r(1).Array||Array,u={},c=function(t,n){e.each.call(t.split(","),function(t){void 0==n&&t in i?u[t]=i[t]:t in[]&&(u[t]=r(12)(Function.call,[][t],n))})};c("pop,reverse,shift,keys,values,entries",1),c("indexOf,every,some,forEach,map,filter,find,findIndex,includes",3),c("join,slice,concat,push,splice,unshift,sort,lastIndexOf,reduce,reduceRight,copyWithin,fill"),o(o.S,"Array",u)}]);
+},{}]},{},[28]);

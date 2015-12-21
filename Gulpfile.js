@@ -38,10 +38,12 @@ gulp.task('vendor', function() {
     'vendor/bootstrap/dist/js/bootstrap.js',
     'vendor/magnific-popup/dist/jquery.magnific-popup.js',
     'vendor/toastr/toastr.js',
-    'vendor/scrollmagic/scrollmagic/uncompressed/ScrollMagic.js',
+    'vendor/scrollmagic/scrollmagic/minified/ScrollMagic.min.js',
     'vendor/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js',
-    'vendor/scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators.js',
-    'vendor/gsap/src/minified/TweenMax.min.js'
+//'vendor/scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js',
+    'vendor/gsap/src/minified/TweenMax.min.js',
+    'vendor/d3/d3.js',
+    'vendor/nvd3/build/nv.d3.js'
   ]).pipe(concat('vendor.js'))
     .pipe(gulpif(production, uglify({ mangle: false })))
     .pipe(gulp.dest('public/js'));
@@ -118,7 +120,8 @@ gulp.task('browserify-watch', ['browserify-vendor'], function() {
 gulp.task('styles', function() {
     return gulp.src([
       'app/stylesheets/main.less',
-      'node_modules/react-select/less/default.less'])
+      'node_modules/react-select/less/default.less',
+      'vendor/nvd3/build/nv.d3.css'])
     .pipe(plumber())
     .pipe(less())
     .pipe(autoprefixer())

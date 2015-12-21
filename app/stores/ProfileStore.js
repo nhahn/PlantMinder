@@ -15,6 +15,10 @@ class ProfileStore {
       this.user = payload.user;
   }
   
+  updateUserFail(err) {
+    console.log(err.errorMessage); 
+  }
+  
   deepExtend(obj) {
     var self = this;
     var parentRE = /#{\s*?_\s*?}/,

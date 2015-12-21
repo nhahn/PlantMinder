@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 //router.use('/characters', require('./characters'))
 module.exports = function(passport) {
   
-  router.use('/plants', require('./plants'));
+  router.use('/plants', require('./plants')(passport));
   router.use('/profile', require('./profile')(passport));
   router.use('/devices', require('./devices')); 
   

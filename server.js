@@ -32,6 +32,9 @@ app.use(expressValidator({
 
   }
 }));
+
+app.enable('trust proxy');
+
 app.use(logger('dev'));
 
 app.use(bodyParser.json());

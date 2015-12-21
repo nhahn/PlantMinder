@@ -4,80 +4,106 @@ var async = require('async');
 var request = require('request');
 var _ = require('underscore');
 var Promise = require('bluebird');
+var rp = require('request-promise');
 
 var jwt = require('jsonwebtoken');
 var config = rootRequire('config/auth');
 
 var mongoose = require('mongoose');
 //var TabInfo = rootRequire('models/tabInfo');
-var User = rootRequire('models/user');
+var User = rootRequire('models/device');
+var Device = rootRequire('models/device');
+var PlantRecord = rootRequire('models/plantRecord');
 /*
 *
 * Check for tokens (basically, ensure our user is logged in before using the API
 *
 */
 
-router.use(function(req, res, next) {
-  // .. some logic here .. like any other middleware
-  var token = (req.body.token)? req.body.token : req.query.token;
-  jwt.verify(token, config.jwtKey, function(err, decoded) {
-    if (err) return res.status(401).send(err);
-    req.query.user = decoded._id;
-    next();
+module.exports = function(passport) {
+  router.use(function(req, res, next) {
+    // .. some logic here .. like any other middleware
+    passport.authenticate('jwt', function(err, user, info) {
+      if (err || !user) {
+        res.status(401); 
+        if (!user) {
+          res.flash("No user found", "error");
+          res.json({err: "Please provide a valid email and/or password"});
+        } if (err) {
+          res.flash(err.message, "error");  
+          res.json({err: err.message});
+        }
+        return;
+      }
+      req.user = user;
+      next();   
+    })(req, res, next);
   });
-});
 
-//Add a new task
-router.post('/', function(req, res, next) {
-  console.log("Getting here");
-  var task = new Task({name: req.body.name, type: req.body.type, user: req.query.user});
-  task.save(function(err) {
-    if (err) return next(err);
-    res.send(task);
+  //Get a current user's profile
+  router.get('/', function(req, res, next) {
+    res.json(req.user.locations);
   });
-});
-
-//Get all tasks (for the logged in user)
-router.get('/', function(req, res, next) {
-  Task.find({user: req.query.user}).sort({created: -1}).execAsync().then(function(tasks) {
-    res.send(tasks);
-  }).catch(function(err) {
-    next(err);
-  });
-});
-
-//Get a specific task (for the logged in user)
-router.get('/:name', function(req, res, next) {
-  Task.find({user: req.query.user, name: req.params.name}).sort({created: 1}).execAsync().then(function(tasks) {
-    res.send(tasks);
-  }).catch(function(err) {
-    next(err);
-  });
-});
-
-//Associate a nav root with a task
-router.post('/associate', function(req, res, next) {
-  Promise.map(req.body.tabs, function(item) {
-    return Tab.findOne({_id: item.tab}).execAsync().then(function(tab) {
-      //Found the task that we want
-      tab.tasks.push({name: item.name});
-      return tab.saveAsync();
+  
+  router.put('/:location/:id/image', function(req, res, next) {
+    var location = req.user.locations.id(req.params.location)
+    if (!location) { return res.status(404).json({err: "Cannot find location that plant is in"}); }
+    var plant = location.plants.id(req.params.id)
+    if (!plant) { return res.status(404).json({err: "Cannot find plant with that ID"}); }
+    
+    plant.image = req.body.image;
+    req.user.save(function(err, user) {
+      if(err) { return next(err); };
+      res.json({status: "Image updated"});
     });
-  }).then(function(tabs) {
-    res.send(tabs);
-  }).catch(function(err) {
-    next(err);
   });
-});
 
-//Remove a task
-router.delete('/:id', function(req, res, next) {
-  Task.findOneAndRemove({_id: req.params.id}).execAsync().then(function(task) {
-    res.send({delete: true});
-  }).catch(function(err) {
-    next(err);
-  })
-});
+  router.post('/:location/:id/update', function(req, res, next) {
+    var location = req.user.locations.id(req.params.location)
+    if (!location) { return res.status(404).json({err: "Cannot find location that plant is in"}); }
+    var plant = location.plants.id(req.params.id)
+    if (!plant) { return res.status(404).json({err: "Cannot find plant with that ID"}); }
+    
+    Object.keys(req.body).forEach(function(key) {
+      plant[key] = req.body[key];
+    });
+    req.user.save(function(err, user) {
+      if(err) { return next(err); };
+      delete plant.image;
+      res.json(plant);
+    });
+  });
+  
+  router.post('/associate', function(req, res, next) {
+    Device.findOne({uuid: req.body.uuid}).execAsync().then(function(device) {      
+      if (!device) {
+        throw new Error("No device found. Did it correctly connect to WiFi?");
+      } else if (device.user) {
+        throw new Error("Device already associated with another user");
+      } else {
+        if (req.user.locations.length < 1) {
+          console.log('http://freegeoip.net/json/'+req.ip);
+          return rp({uri: 'http://freegeoip.net/json/'+req.ip, json: true}).then(function(response) {
+            req.user.locations.push({ name: "Default", latlng: [response.latitude, response.longitude] })
+            return device;
+          });
+        } else {
+          return device;
+        }
+      }
+    }).catch(function(err) {
+      res.status(404).json({err: err.message})
+    }).then(function(device) {
+      req.user.locations[0].plants.push({device: {id: device._id, uuid: device.uuid}, name: "NewPlant", type: "Unknown"});
+      device.user = req.user._id;
+      return [req.user.saveAsync(), device.saveAsync()];
+    }).map(function(user, device) {
+      return res.json({associated: true, device: device});
+    }).catch(function(err) {
+      next(err);
+    });
+  });
 
 
-module.exports = router;
+  return router;
+}
