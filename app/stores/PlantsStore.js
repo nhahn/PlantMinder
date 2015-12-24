@@ -33,7 +33,7 @@ class PlantsStore {
     this.loadError = err.errorMessage;
   }
   
-  onPlantUpdateSuccess(payload) {
+  onUpdateSuccess(payload) {
     var location = findWhere(this.locations, {_id: payload.location._id});
     var plant = findIndex(location.plants, {_id: payload.plant._id});
                                 
@@ -41,7 +41,7 @@ class PlantsStore {
     location.plants[plant] = payload.plant;
   }
   
-  onPlantUpdateFail(err) {
+  onUpdateFail(err) {
     this.loadError = err.errorMessage;
   }
   

@@ -45,9 +45,12 @@ class AuthStore {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.status = 'loggedOut';
-    setTimeout(() =>{ //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
-      payload.router.transitionTo('/');
-    }, 1000);
+    if(payload && payload.router) 
+    {
+        setTimeout(() =>{ //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
+        payload.router.transitionTo('/');
+      }, 1000);
+    }
   }
   
   onUpdateEmail(event) {

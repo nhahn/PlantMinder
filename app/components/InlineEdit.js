@@ -10,16 +10,10 @@ class InlineEdit extends React.Component {
         this.state = {
             editing: false,
             text: this.props.text,
-            minLength: this.props.minLength || 1,
-            maxLength: this.props.maxLength || 256,
             hasError: '',
             helpText: ''
         };
-        this.helpText = this.props.errorText;
-        if (this.props.validate)
-          this.isInputValid = this.props.validate
-        else
-          this.helpText = `Text length must be between ${this.state.minLength} and ${this.state.maxLength}`;
+          
     }
 
     startEditing() {
@@ -27,14 +21,22 @@ class InlineEdit extends React.Component {
     }
 
     finishEditing(event) {
+      this.validate = this.isInputValid;
+      let helpText = this.props.helpText;
+      if (this.props.validate)
+          this.validate = this.props.validate
+      else
+        helpText = `Text length must be between ${this.props.minLength} and ${this.props.maxLength}`;
+
+      
       if (event)
         event.preventDefault();
       if (this.props.text === this.state.text) {
         this.cancelEditing();
-      } else if (!this.isInputValid(this.state.text)) {
+      } else if (!this.validate(this.state.text)) {
         this.setState({
           hasError: 'has-error',
-          helpText: this.helpText
+          helpText: helpText
         });
       } else { 
         this.commitEditing();
@@ -51,7 +53,7 @@ class InlineEdit extends React.Component {
     }
 
     isInputValid(text) {
-        return (text.length >= this.state.minLength && text.length <= this.state.maxLength);
+        return (text.length >= (this.props.minLength || 1) && text.length <= (this.props.maxLength || 256));
     }
 
     keyDown(event) {
@@ -76,19 +78,19 @@ class InlineEdit extends React.Component {
             inputElem.focus();
             SelectInputText(inputElem);
         } else if (this.state.editing && prevProps.text != this.props.text) {
-            this.finishEditing();
+            this.cancelEditing();
         }
     }
 
     render() {
         if(!this.state.editing) {
-            return <span className={this.props.className} onClick={this.startEditing.bind(this)} style={{fontStyle: "italic"}}>{this.state.text || this.props.placeholder}</span>
+            return <span className={this.props.className} onClick={this.startEditing.bind(this)} style={{fontStyle: "italic"}}>{this.props.text || this.props.placeholder}</span>
         } else {
             const Element = this.props.element || 'input';
             return (
               <form className={"form-inline " + this.props.className} onSubmit={this.finishEditing.bind(this)}>
                 <div className={"form-group " + this.state.hasError}>
-                  <Element className={this.props.activeClassName} onKeyDown={this.keyDown.bind(this)} onBlur={this.finishEditing.bind(this)} ref="input" placeholder={this.props.placeholder} defaultValue={this.state.text} onChange={this.textChanged.bind(this)} onReturn={this.finishEditing.bind(this)} />
+                  <Element className={this.props.activeClassName} onKeyDown={this.keyDown.bind(this)} onBlur={this.finishEditing.bind(this)} ref="input" placeholder={this.props.placeholder} defaultValue={this.props.text} onChange={this.textChanged.bind(this)} onReturn={this.finishEditing.bind(this)} />
                   <span className="help-block">{this.state.helpText}</span>
                 </div>&nbsp;
                 <div className="form-group" style={{verticalAlign: "top"}}>
@@ -102,7 +104,7 @@ class InlineEdit extends React.Component {
 }
 
 InlineEdit.propTypes = {
-    text: React.PropTypes.string.isRequired,
+    text: React.PropTypes.string,
     className: React.PropTypes.string,
     change: React.PropTypes.func.isRequired,
     placeholder: React.PropTypes.string,

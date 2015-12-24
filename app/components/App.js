@@ -3,6 +3,7 @@ import {RouteHandler} from 'react-router';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import AuthStore from '../stores/AuthStore';
+import AuthActions from '../actions/AuthActions';
 import {assign} from 'underscore';
 import HomeActions from '../actions/HomeActions';
 
@@ -33,6 +34,7 @@ class App extends React.Component {
         console.log("Token authentication error");
         console.log(currentPath);
         let currentPath = this.context.router.getCurrentPathname();
+        AuthActions.logout()
         this.context.router.transitionTo('/auth');
       }
     });

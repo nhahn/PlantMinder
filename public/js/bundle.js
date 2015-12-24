@@ -85,7 +85,7 @@ var AuthActions = (function () {
         url: '/auth/login',
         data: { email: payload.email, password: payload.password }
       }).done(function (data) {
-        (0, _underscore.assign)(payload, { message: data.message });
+        (0, _underscore.assign)(payload, { token: data.token });
         _this.actions.authSuccess(payload);
       }).fail(function (jqXhr) {
         (0, _underscore.assign)(payload, { errorMessage: jqXhr.responseJSON.err });
@@ -215,6 +215,8 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -225,11 +227,31 @@ var _alt2 = _interopRequireDefault(_alt);
 
 var _underscore = require('underscore');
 
-var PlantActions = function PlantActions() {
-  _classCallCheck(this, PlantActions);
+var PlantActions = (function () {
+  function PlantActions() {
+    _classCallCheck(this, PlantActions);
 
-  this.generateActions();
-};
+    this.generateActions('editingImage', 'deviceFetched', 'deviceMissed');
+  }
+
+  _createClass(PlantActions, [{
+    key: 'fetchDevice',
+    value: function fetchDevice(id) {
+      var _this = this;
+
+      $.ajax({
+        type: 'GET',
+        url: '/api/plants/' + id + '/device'
+      }).done(function (data) {
+        _this.actions.deviceFetched({ device: data });
+      }).fail(function (jqXhr) {
+        _this.actions.deviceMissed({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }]);
+
+  return PlantActions;
+})();
 
 exports['default'] = _alt2['default'].createActions(PlantActions);
 module.exports = exports['default'];
@@ -257,7 +279,7 @@ var PlantsActions = (function () {
   function PlantsActions() {
     _classCallCheck(this, PlantsActions);
 
-    this.generateActions('plantsGathered', 'plantsDropped', 'setCurrentLocation', 'imageUpdated', 'imageFailed', 'plantUpdateSuccess', 'plantUpdateFail');
+    this.generateActions('plantsGathered', 'plantsDropped', 'setCurrentLocation', 'imageUpdated', 'imageFailed', 'updateSuccess', 'updateFail');
   }
 
   _createClass(PlantsActions, [{
@@ -273,6 +295,16 @@ var PlantsActions = (function () {
       }).fail(function (jqXhr) {
         _this.actions.plantsDropped({ errorMessage: jqXhr.responseJSON.err });
       });
+    }
+  }, {
+    key: 'updateName',
+    value: function updateName(location, plant, name) {
+      this.actions.updatePlant(location, plant, { name: name });
+    }
+  }, {
+    key: 'updateType',
+    value: function updateType(location, plant, type) {
+      this.actions.updatePlant(location, plant, { type: type });
     }
   }, {
     key: 'updatePlant',
@@ -512,19 +544,42 @@ var AddPlant = (function (_React$Component) {
                     triggerHook: 0.35
                 } });
             var batteryTween = TweenMax.to("#battery1", 1, { className: "+=battery-transition" });
-            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -150 }).setTween(batteryTween).addTo(this.controller);
+            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -50 }).setTween(batteryTween)
+            //.addIndicators({name: "tween battery"}) // add indicators (requires plugin)
+            .addTo(this.controller);
             var batteryTween2 = TweenMax.to("#battery2", 1, { className: "+=battery-transition" });
-            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%", offset: -100 }).setTween(batteryTween2).addTo(this.controller);
-            this.stickScene = new ScrollMagic.Scene({ triggerElement: "#fixed", duration: 850, offset: 50 }).setPin("#device").addTo(this.controller);
+            this.batteryScene = new ScrollMagic.Scene({ triggerElement: "#trigger1", duration: "25%" }).setTween(batteryTween2)
+            //.addIndicators({name: "tween battery 2"}) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.stickScene = new ScrollMagic.Scene({ triggerElement: "#fixed", duration: $('.panel').offset().top - $('#trigger1').offset().top - 200 }).setPin("#device")
+            //.addIndicators({name: "1 (duration: 300)"})
+            .addTo(this.controller);
             var switchTween = TweenMax.to("#switch", 1, { yPercent: "-92%" });
-            this.switchScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", duration: 80 }).setTween(switchTween).addTo(this.controller);
+            this.switchScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", duration: 80 }).setTween(switchTween)
+            //.addIndicators({name: "switch"}) // add indicators (requires plugin)
+            .addTo(this.controller);
             var wifiAnimation = TweenMax.staggerFromTo(".wifiBar", 2, { opacity: 0 }, { opacity: 1, repeat: -1 }, 0.2);
             var wifiTween = TweenMax.fromTo(".wifiBar", 2, { display: "none" }, { display: "initial" });
-            this.wifiScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", offset: 80 }).setTween(wifiTween).addTo(this.controller);
-            this.menuScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger" }).setClassToggle("#netDropDown", "showNet").addTo(this.controller);
-            this.menuWifiScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger", offset: 50 }).setClassToggle(".wifiHighlight", "plantWifi").addTo(this.controller);
+            this.wifiScene = new ScrollMagic.Scene({ triggerElement: "#switchTrigger", offset: 80 }).setTween(wifiTween)
+            //.addIndicators({name: "wifi loop"}) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.menuScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger" }).setClassToggle("#netDropDown", "showNet")
+            //.addIndicators({name: "menu"}) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.menuWifiScene = new ScrollMagic.Scene({ triggerElement: "#menuTrigger", offset: 50 }).setClassToggle(".wifiHighlight", "plantWifi")
+            //.addIndicators({name: "menu2"}) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.typing = TweenMax.staggerFromTo(".st3 t", 1, { opacity: 0 }, { opacity: 1, ease: Back.easeOut }, 0.2);
+            this.wifiPageScene = new ScrollMagic.Scene({ triggerElement: "#netTrigger", duration: 50 }).setTween(this.typing)
+            //.addIndicators({name: "menu2"}) // add indicators (requires plugin)
+            .addTo(this.controller);
+            this.wifiPageShowScene = new ScrollMagic.Scene({ triggerElement: "#netTrigger", offset: 50 }).setClassToggle(".webPage", "display")
+            //.addIndicators({name: "menu2"}) // add indicators (requires plugin)
+            .addTo(this.controller);
             var plantTween = TweenMax.to("#device", 1, { yPercent: 87, scale: 0.2 });
-            this.plantScene = new ScrollMagic.Scene({ triggerElement: "#plantTrigger", duration: 100, offset: -100 }).setTween(plantTween).addTo(this.controller);
+            this.plantScene = new ScrollMagic.Scene({ triggerElement: "#plantTrigger", duration: 100, offset: -100 }).setTween(plantTween)
+            //.addIndicators({name: "plant the sensor"}) // add indicators (requires plugin)
+            .addTo(this.controller);
         }
     }, {
         key: 'componentWillUnmount',
@@ -562,7 +617,7 @@ var AddPlant = (function (_React$Component) {
                     { className: 'row' },
                     _react2['default'].createElement(
                         'div',
-                        { className: 'col-sm-7 col-sm-offset-1' },
+                        { className: 'col-sm-7 col-sm-offset-1 col-xs-9' },
                         _react2['default'].createElement(
                             'h2',
                             { id: 'title' },
@@ -581,7 +636,7 @@ var AddPlant = (function (_React$Component) {
                     ),
                     _react2['default'].createElement(
                         'div',
-                        { className: 'col-sm-2' },
+                        { className: 'col-sm-2 col-xs-3' },
                         _react2['default'].createElement('img', { src: '/img/topPlant.svg', className: 'img-responsive' })
                     )
                 ),
@@ -591,12 +646,12 @@ var AddPlant = (function (_React$Component) {
                     { className: 'row', id: 'fixed' },
                     _react2['default'].createElement(
                         'div',
-                        { className: 'col-sm-2 col-sm-offset-1' },
+                        { className: 'col-sm-2 col-sm-offset-1 col-xs-3' },
                         _react2['default'].createElement('img', { src: '/img/device.svg', className: 'img-responsive', id: 'device' })
                     ),
                     _react2['default'].createElement(
                         'div',
-                        { className: 'col-sm-9' },
+                        { className: 'col-xs-9', id: 'trigger1' },
                         _react2['default'].createElement(
                             'h4',
                             null,
@@ -609,7 +664,7 @@ var AddPlant = (function (_React$Component) {
                         ),
                         _react2['default'].createElement('img', { id: 'battery1', src: '/img/battery.svg', style: { width: "15%" } }),
                         _react2['default'].createElement('img', { id: 'battery2', src: '/img/battery.svg', style: { width: "15%" } }),
-                        _react2['default'].createElement('div', { id: 'trigger1', className: 'spacer', style: { minHeight: 100 } }),
+                        _react2['default'].createElement('div', { className: 'spacer', style: { minHeight: 100 } }),
                         _react2['default'].createElement(
                             'h4',
                             { id: 'switchTrigger' },
@@ -688,7 +743,7 @@ var AddPlant = (function (_React$Component) {
                             ),
                             _react2['default'].createElement(
                                 'text',
-                                { transform: 'matrix(1 0 0 1 191.1095 30.8321)', 'font-family': '\'ArialMT\'', 'font-size': '18.7046px' },
+                                { transform: 'matrix(1 0 0 1 191.1095 30.8321)', 'font-size': '18.7046px' },
                                 '100%'
                             ),
                             _react2['default'].createElement(
@@ -700,7 +755,7 @@ var AddPlant = (function (_React$Component) {
                                     null,
                                     _react2['default'].createElement(
                                         'text',
-                                        { transform: 'matrix(1 0 0 1 92.3267 106.2575)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        { transform: 'matrix(1 0 0 1 92.3267 106.2575)', 'font-size': '15px' },
                                         'GuestNetwork'
                                     ),
                                     _react2['default'].createElement(
@@ -719,7 +774,7 @@ var AddPlant = (function (_React$Component) {
                                     null,
                                     _react2['default'].createElement(
                                         'text',
-                                        { transform: 'matrix(1 0 0 1 92.3265 134.2465)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        { transform: 'matrix(1 0 0 1 92.3265 134.2465)', 'font-size': '15px' },
                                         'SecureNet'
                                     ),
                                     _react2['default'].createElement(
@@ -740,7 +795,7 @@ var AddPlant = (function (_React$Component) {
                                     { className: 'wifiHighlight' },
                                     _react2['default'].createElement(
                                         'text',
-                                        { transform: 'matrix(1 0 0 1 92.3265 162.2355)', fill: '#010101', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        { transform: 'matrix(1 0 0 1 92.3265 162.2355)', fill: '#010101', 'font-size': '15px' },
                                         'PlantMinder'
                                     ),
                                     _react2['default'].createElement(
@@ -759,7 +814,7 @@ var AddPlant = (function (_React$Component) {
                                     null,
                                     _react2['default'].createElement(
                                         'text',
-                                        { transform: 'matrix(1 0 0 1 92.3264 190.2244)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        { transform: 'matrix(1 0 0 1 92.3264 190.2244)', 'font-size': '15px' },
                                         'FiosWiFi'
                                     ),
                                     _react2['default'].createElement(
@@ -779,7 +834,7 @@ var AddPlant = (function (_React$Component) {
                                     null,
                                     _react2['default'].createElement(
                                         'text',
-                                        { transform: 'matrix(1 0 0 1 92.3265 80.2686)', 'font-family': '\'ArialMT\'', 'font-size': '15px' },
+                                        { transform: 'matrix(1 0 0 1 92.3265 80.2686)', 'font-size': '15px' },
                                         'NetworkA'
                                     ),
                                     _react2['default'].createElement(
@@ -807,6 +862,132 @@ var AddPlant = (function (_React$Component) {
                             'A connection screen might take a little while to appear. If entering a URL in the browser, you should automatically be redirected to the device connection page'
                         ),
                         _react2['default'].createElement(
+                            'svg',
+                            { version: '1.1', id: 'connectionWindow', xmlns: 'http://www.w3.org/2000/svg', x: '0px', y: '0px', style: { width: "50%", margin: "auto", display: "block" }, viewBox: '-251.9 353.1 93.7 62.3' },
+                            _react2['default'].createElement('path', { className: 'st0', d: 'M-250,358c0-1.7,1.3-3,3-3h84c1.7,0,3,1.3,3,3v52c0,1.7-1.3,3-3,3h-84c-1.7,0-3-1.3-3-3V358z' }),
+                            _react2['default'].createElement('path', { className: 'st1', d: 'M-248,364h86v45c0,1.1-0.9,2-2,2h-82c-1.1,0-2-0.9-2-2V364z' }),
+                            _react2['default'].createElement('circle', { className: 'st1', cx: '-246.5', cy: '359.5', r: '1.5' }),
+                            _react2['default'].createElement('circle', { className: 'st1', cx: '-241.5', cy: '359.5', r: '1.5' }),
+                            _react2['default'].createElement('circle', { className: 'st1', cx: '-236.5', cy: '359.5', r: '1.5' }),
+                            _react2['default'].createElement('path', { className: 'st1', d: 'M-231,358c0-0.6,0.4-1,1-1h65c0.6,0,1,0.4,1,1v3c0,0.6-0.4,1-1,1h-65c-0.6,0-1-0.4-1-1V358z' }),
+                            _react2['default'].createElement(
+                                'foreignObject',
+                                { transform: 'matrix(1 0 0 1 -228.1486 357.0001)', className: 'st2 st3' },
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    'h'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    't'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    't'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    'p'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    ':'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '/'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '/'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '1'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '9'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '2'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '.'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '1'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '6'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '8'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '.'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '1'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '.'
+                                ),
+                                _react2['default'].createElement(
+                                    't',
+                                    null,
+                                    '4'
+                                )
+                            ),
+                            _react2['default'].createElement(
+                                'g',
+                                { className: 'webPage' },
+                                _react2['default'].createElement('rect', { x: '-248', y: '364', className: 'st4', width: '86', height: '6.4' }),
+                                _react2['default'].createElement(
+                                    'text',
+                                    { transform: 'matrix(1 0 0 1 -246.6543 368.7881)', className: 'st1 st2 st5' },
+                                    'PlantMinder'
+                                ),
+                                _react2['default'].createElement('path', { className: 'st6', d: 'M-198.5,382.1H-216c-0.6,0-1-0.4-1-1v-4.7c0-0.6,0.4-1,1-1h17.5c0.6,0,1,0.4,1,1v4.7 C-197.5,381.6-197.9,382.1-198.5,382.1z' }),
+                                _react2['default'].createElement('path', { className: 'st6', d: 'M-198.5,390.8H-216c-0.6,0-1-0.4-1-1v-4.7c0-0.6,0.4-1,1-1h17.5c0.6,0,1,0.4,1,1v4.7 C-197.5,390.4-197.9,390.8-198.5,390.8z' }),
+                                _react2['default'].createElement(
+                                    'text',
+                                    { transform: 'matrix(1 0 0 1 -210.4509 379.8766)', className: 'st1 st2 st7' },
+                                    'Scan'
+                                ),
+                                _react2['default'].createElement(
+                                    'text',
+                                    { transform: 'matrix(1 0 0 1 -212.0738 388.5013)', className: 'st1 st2 st7' },
+                                    'Manual'
+                                )
+                            )
+                        ),
+                        _react2['default'].createElement(
                             'h4',
                             { id: 'credTrigger' },
                             'Enter your WiFi credentials into the web page. Your device will restart and try to connect to the WiFi network.'
@@ -825,7 +1006,7 @@ var AddPlant = (function (_React$Component) {
                         _react2['default'].createElement(
                             'h4',
                             null,
-                            'Finally, enter the device identifier found on the back into the form below. This will associated the device with your account.'
+                            'Finally, enter the device identifier found on the back of the device into the form below. This will associated the device with your account.'
                         ),
                         _react2['default'].createElement(
                             'p',
@@ -844,13 +1025,13 @@ var AddPlant = (function (_React$Component) {
                     { className: 'row', id: 'plantTrigger' },
                     _react2['default'].createElement(
                         'div',
-                        { className: 'col-sm-2 col-sm-offset-1' },
+                        { className: 'col-sm-2 col-sm-offset-1 col-xs-3' },
                         _react2['default'].createElement('img', { src: '/img/plantTop.svg', className: 'img-responsive', style: { zIndex: -10, position: 'relative' } }),
                         _react2['default'].createElement('img', { src: '/img/tableBottom.svg', className: 'img-responsive', style: { zIndex: 3, position: 'relative' } })
                     ),
                     _react2['default'].createElement(
                         'div',
-                        { className: 'col-sm-9' },
+                        { className: 'col-xs-9' },
                         _react2['default'].createElement(
                             'div',
                             { className: 'panel panel-default' },
@@ -946,6 +1127,10 @@ var _storesAuthStore = require('../stores/AuthStore');
 
 var _storesAuthStore2 = _interopRequireDefault(_storesAuthStore);
 
+var _actionsAuthActions = require('../actions/AuthActions');
+
+var _actionsAuthActions2 = _interopRequireDefault(_actionsAuthActions);
+
 var _underscore = require('underscore');
 
 var _actionsHomeActions = require('../actions/HomeActions');
@@ -988,6 +1173,7 @@ var App = (function (_React$Component) {
           console.log("Token authentication error");
           console.log(currentPath);
           var currentPath = _this.context.router.getCurrentPathname();
+          _actionsAuthActions2['default'].logout();
           _this.context.router.transitionTo('/auth');
         }
       });
@@ -1046,7 +1232,7 @@ App.contextTypes = {
 exports['default'] = App;
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":4,"../stores/AuthStore":31,"./Footer":15,"./Navbar":18,"react":"react","react-router":"react-router","underscore":"underscore"}],13:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../actions/HomeActions":4,"../stores/AuthStore":31,"./Footer":15,"./Navbar":18,"react":"react","react-router":"react-router","underscore":"underscore"}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1307,6 +1493,12 @@ var Feedback = (function (_React$Component) {
     _classCallCheck(this, Feedback);
 
     _get(Object.getPrototypeOf(Feedback.prototype), 'constructor', this).call(this, props);
+    this.state = {
+      name: '',
+      email: '',
+      message: '',
+      check: ''
+    };
   }
 
   _createClass(Feedback, [{
@@ -1325,9 +1517,217 @@ var Feedback = (function (_React$Component) {
       this.setState(state);
     }
   }, {
+    key: 'updateName',
+    value: function updateName(event) {
+      this.setState({
+        name: event.target.value,
+        nameValidationState: '',
+        nameHelpBlock: ''
+      });
+    }
+  }, {
+    key: 'validateName',
+    value: function validateName() {
+      if (this.state.name == "") {
+        this.setState({
+          nameValidationState: 'has-error',
+          nameHelpBlock: 'Please enter a contact name'
+        });
+        return false;
+      }
+      return true;
+    }
+  }, {
+    key: 'updateEmail',
+    value: function updateEmail(event) {
+      this.setState({
+        email: event.target.value,
+        emailValidationState: '',
+        emailHelpBlock: ''
+      });
+    }
+  }, {
+    key: 'validateEmail',
+    value: function validateEmail(event) {
+      if (!this.state.email.match(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i)) {
+        this.setState({ emailHelpBlock: "Please enter a valid email address", emailValidationState: 'has-error' });
+        return false;
+      }
+      return true;
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit(event) {
+      event.preventDefault();
+
+      var email = this.state.email.trim();
+      var password = this.state.password;
+
+      if (!email) {
+        SignupActions.invalidEmail();
+        this.refs.emailTextField.getDOMNode().focus();
+      }
+
+      if (!password) {
+        SignupActions.invalidPassword();
+        this.refs.passwordTextField.getDOMNode().focus();
+      }
+
+      if (email && password) {
+        SignupActions.signup({ router: this.context.router, token: this.state.token, email: email, password: password });
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
-      return _react2['default'].createElement('div', { className: 'container' });
+      return _react2['default'].createElement(
+        'div',
+        { className: 'container' },
+        _react2['default'].createElement(
+          'div',
+          { className: 'row' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-md-12' },
+            _react2['default'].createElement(
+              'form',
+              { role: 'form', onSubmit: this.handleSubmit.bind(this) },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-lg-6' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'well well-sm' },
+                  _react2['default'].createElement(
+                    'strong',
+                    null,
+                    _react2['default'].createElement('i', { className: 'glyphicon glyphicon-ok form-control-feedback', style: { right: 14 } }),
+                    ' Required Field'
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: "form-group " + this.state.nameValidationState },
+                  _react2['default'].createElement(
+                    'label',
+                    { htmlFor: 'InputName' },
+                    'Your Name'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'input-group' },
+                    _react2['default'].createElement('input', { type: 'text', className: 'form-control', id: 'InputName', placeholder: 'Enter Name', value: this.state.name,
+                      onChange: this.updateName.bind(this), onBlur: this.validateName.bind(this), autoFocus: true }),
+                    _react2['default'].createElement(
+                      'span',
+                      { className: 'input-group-addon' },
+                      _react2['default'].createElement('i', { className: 'glyphicon glyphicon-ok form-control-feedback', style: { right: -4 } })
+                    )
+                  ),
+                  _react2['default'].createElement(
+                    'span',
+                    { className: 'help-block' },
+                    this.state.nameHelpBlock
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: "form-group " + this.state.emailValidationState },
+                  _react2['default'].createElement(
+                    'label',
+                    { htmlFor: 'InputEmail' },
+                    'Your Email'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'input-group' },
+                    _react2['default'].createElement('input', { type: 'email', className: 'form-control', id: 'InputEmail', name: 'InputEmail', placeholder: 'Enter Email',
+                      value: this.state.email, onChange: this.updateEmail.bind(this), onBlur: this.validateEmail.bind(this) }),
+                    _react2['default'].createElement(
+                      'span',
+                      { className: 'input-group-addon' },
+                      _react2['default'].createElement('i', { className: 'glyphicon glyphicon-ok form-control-feedback', style: { right: -4 } })
+                    )
+                  ),
+                  _react2['default'].createElement(
+                    'span',
+                    { className: 'help-block' },
+                    this.state.emailHelpBlock
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'form-group' },
+                  _react2['default'].createElement(
+                    'label',
+                    { htmlFor: 'InputMessage' },
+                    'Message'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'input-group' },
+                    _react2['default'].createElement('textarea', { name: 'InputMessage', id: 'InputMessage', className: 'form-control', rows: '5', required: true }),
+                    _react2['default'].createElement(
+                      'span',
+                      { className: 'input-group-addon' },
+                      _react2['default'].createElement('i', { className: 'glyphicon glyphicon-ok form-control-feedback', style: { right: -4 } })
+                    )
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'form-group' },
+                  _react2['default'].createElement(
+                    'label',
+                    { htmlFor: 'InputReal' },
+                    'What is 4+3? (Simple Spam Checker)'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'input-group' },
+                    _react2['default'].createElement('input', { type: 'text', className: 'form-control', name: 'InputReal', id: 'InputReal', required: true }),
+                    _react2['default'].createElement(
+                      'span',
+                      { className: 'input-group-addon' },
+                      _react2['default'].createElement('i', { className: 'glyphicon glyphicon-ok form-control-feedback', style: { right: -4 } })
+                    )
+                  )
+                ),
+                _react2['default'].createElement('input', { type: 'submit', name: 'submit', id: 'submit', value: 'Submit', className: 'btn btn-info pull-right' })
+              )
+            ),
+            _react2['default'].createElement('hr', { className: 'featurette-divider hidden-lg' }),
+            _react2['default'].createElement(
+              'div',
+              { className: 'col-lg-5 col-md-push-1' },
+              _react2['default'].createElement(
+                'address',
+                null,
+                _react2['default'].createElement(
+                  'h3',
+                  null,
+                  'Contact Information'
+                ),
+                _react2['default'].createElement(
+                  'p',
+                  { className: 'lead' },
+                  _react2['default'].createElement(
+                    'a',
+                    { href: '#' },
+                    'Nathan Hahn',
+                    _react2['default'].createElement('br', null),
+                    'Carnegie Mellon University',
+                    _react2['default'].createElement('br', null),
+                    'HCII Department, RM 2501C'
+                  ),
+                  _react2['default'].createElement('br', null),
+                  'Phone: 703-587-3175'
+                )
+              )
+            )
+          )
+        )
+      );
     }
   }]);
 
@@ -1444,8 +1844,7 @@ var Footer = (function (_React$Component) {
                   'strong',
                   null,
                   'React'
-                ),
-                ' with Flux architecture and server-side rendering.'
+                )
               ),
               _react2['default'].createElement(
                 'p',
@@ -1542,28 +1941,135 @@ var Home = (function (_React$Component) {
         { className: 'container' },
         _react2['default'].createElement(
           'div',
-          { className: 'row fadeInUp animated' },
+          { className: 'row', style: { textAlign: 'center', paddingTop: 30 } },
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-10 col-sm-offset-1 thumbnail' },
-            _react2['default'].createElement('img', { src: '/img/home_plant.jpg' })
+            { className: 'col-sm-3 vcenter' },
+            _react2['default'].createElement('img', { className: '', src: '/img/plant2.svg', style: { width: "100%", minWidth: 200 } })
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-3 vcenter' },
+            _react2['default'].createElement('img', { className: 'heartbeat', src: '/img/heart.svg', style: { width: "50%" } }),
+            _react2['default'].createElement(
+              'h2',
+              null,
+              'Listen to your Plants Heartbeat'
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-6 vcenter' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'row' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-sm-6 vcenter' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-5 vcenter' },
+                    _react2['default'].createElement('img', { className: '', src: '/img/watering_can.svg', style: { minWidth: 100 } })
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-7 vcenter' },
+                    _react2['default'].createElement(
+                      'h4',
+                      null,
+                      'Soil Moisture'
+                    )
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-5 vcenter' },
+                    _react2['default'].createElement('img', { className: '', src: '/img/sun.svg', style: { minWidth: 100 } })
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-7 vcenter' },
+                    _react2['default'].createElement(
+                      'h4',
+                      null,
+                      'Sunlight (Lux)'
+                    )
+                  )
+                )
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-sm-6 vcenter' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-5 vcenter' },
+                    _react2['default'].createElement('img', { className: '', src: '/img/humidity.svg', style: { minWidth: 100 } })
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-7 vcenter' },
+                    _react2['default'].createElement(
+                      'h4',
+                      null,
+                      'Humidity'
+                    )
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-5 vcenter' },
+                    _react2['default'].createElement('img', { className: '', src: '/img/thermometer.svg', style: { minWidth: 100 } })
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-7 vcenter' },
+                    _react2['default'].createElement(
+                      'h4',
+                      null,
+                      'Temperature'
+                    )
+                  )
+                )
+              )
+            )
           )
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'row' },
+          { className: 'jumbotron', style: { marginTop: 20 } },
+          _react2['default'].createElement(
+            'h3',
+            null,
+            'PlantMinder is a WiFi connected device that you place in your plants. It monitors your plants, and keeps you informed about their health and their enviornment'
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'row', style: { marginTop: 20 } },
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-3 col-sm-offset-2' },
+            { className: 'col-sm-3 col-sm-offset-1' },
             _react2['default'].createElement(
               'h3',
-              null,
+              { style: { marginTop: 0 } },
               'Peace of Mind'
             )
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-5' },
+            { className: 'col-sm-6' },
             _react2['default'].createElement(
               'p',
               null,
@@ -1573,19 +2079,19 @@ var Home = (function (_React$Component) {
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'row' },
+          { className: 'row', style: { paddingTop: 20 } },
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-3 col-sm-offset-2' },
+            { className: 'col-sm-3 col-sm-offset-1' },
             _react2['default'].createElement(
               'h3',
-              null,
+              { style: { marginTop: 0 } },
               'Optimal Care'
             )
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-5' },
+            { className: 'col-sm-6' },
             _react2['default'].createElement(
               'p',
               null,
@@ -1595,19 +2101,19 @@ var Home = (function (_React$Component) {
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'row' },
+          { className: 'row', style: { paddingTop: 20 } },
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-3 col-sm-offset-2' },
+            { className: 'col-sm-3 col-sm-offset-1' },
             _react2['default'].createElement(
               'h3',
-              null,
+              { style: { marginTop: 0 } },
               'Set it and Forget It'
             )
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-5' },
+            { className: 'col-sm-6' },
             _react2['default'].createElement(
               'p',
               null,
@@ -1660,13 +2166,9 @@ var InlineEdit = (function (_React$Component) {
         this.state = {
             editing: false,
             text: this.props.text,
-            minLength: this.props.minLength || 1,
-            maxLength: this.props.maxLength || 256,
             hasError: '',
             helpText: ''
         };
-        this.helpText = this.props.errorText;
-        if (this.props.validate) this.isInputValid = this.props.validate;else this.helpText = 'Text length must be between ' + this.state.minLength + ' and ' + this.state.maxLength;
     }
 
     _createClass(InlineEdit, [{
@@ -1677,13 +2179,17 @@ var InlineEdit = (function (_React$Component) {
     }, {
         key: 'finishEditing',
         value: function finishEditing(event) {
+            this.validate = this.isInputValid;
+            var helpText = this.props.helpText;
+            if (this.props.validate) this.validate = this.props.validate;else helpText = 'Text length must be between ' + this.props.minLength + ' and ' + this.props.maxLength;
+
             if (event) event.preventDefault();
             if (this.props.text === this.state.text) {
                 this.cancelEditing();
-            } else if (!this.isInputValid(this.state.text)) {
+            } else if (!this.validate(this.state.text)) {
                 this.setState({
                     hasError: 'has-error',
-                    helpText: this.helpText
+                    helpText: helpText
                 });
             } else {
                 this.commitEditing();
@@ -1703,7 +2209,7 @@ var InlineEdit = (function (_React$Component) {
     }, {
         key: 'isInputValid',
         value: function isInputValid(text) {
-            return text.length >= this.state.minLength && text.length <= this.state.maxLength;
+            return text.length >= (this.props.minLength || 1) && text.length <= (this.props.maxLength || 256);
         }
     }, {
         key: 'keyDown',
@@ -1731,7 +2237,7 @@ var InlineEdit = (function (_React$Component) {
                 inputElem.focus();
                 SelectInputText(inputElem);
             } else if (this.state.editing && prevProps.text != this.props.text) {
-                this.finishEditing();
+                this.cancelEditing();
             }
         }
     }, {
@@ -1741,7 +2247,7 @@ var InlineEdit = (function (_React$Component) {
                 return _react2['default'].createElement(
                     'span',
                     { className: this.props.className, onClick: this.startEditing.bind(this), style: { fontStyle: "italic" } },
-                    this.state.text || this.props.placeholder
+                    this.props.text || this.props.placeholder
                 );
             } else {
                 var _Element = this.props.element || 'input';
@@ -1751,7 +2257,7 @@ var InlineEdit = (function (_React$Component) {
                     _react2['default'].createElement(
                         'div',
                         { className: "form-group " + this.state.hasError },
-                        _react2['default'].createElement(_Element, { className: this.props.activeClassName, onKeyDown: this.keyDown.bind(this), onBlur: this.finishEditing.bind(this), ref: 'input', placeholder: this.props.placeholder, defaultValue: this.state.text, onChange: this.textChanged.bind(this), onReturn: this.finishEditing.bind(this) }),
+                        _react2['default'].createElement(_Element, { className: this.props.activeClassName, onKeyDown: this.keyDown.bind(this), onBlur: this.finishEditing.bind(this), ref: 'input', placeholder: this.props.placeholder, defaultValue: this.props.text, onChange: this.textChanged.bind(this), onReturn: this.finishEditing.bind(this) }),
                         _react2['default'].createElement(
                             'span',
                             { className: 'help-block' },
@@ -1783,7 +2289,7 @@ var InlineEdit = (function (_React$Component) {
 })(_react2['default'].Component);
 
 InlineEdit.propTypes = {
-    text: _react2['default'].PropTypes.string.isRequired,
+    text: _react2['default'].PropTypes.string,
     className: _react2['default'].PropTypes.string,
     change: _react2['default'].PropTypes.func.isRequired,
     placeholder: _react2['default'].PropTypes.string,
@@ -2075,11 +2581,11 @@ var _actionsPlantsActions = require('../actions/PlantsActions');
 
 var _actionsPlantsActions2 = _interopRequireDefault(_actionsPlantsActions);
 
+var _InlineEdit = require('./InlineEdit');
+
+var _InlineEdit2 = _interopRequireDefault(_InlineEdit);
+
 var _underscore = require('underscore');
-
-var _reactDropzone = require('react-dropzone');
-
-var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
 
 var Plant = (function (_React$Component) {
   _inherits(Plant, _React$Component);
@@ -2093,7 +2599,6 @@ var Plant = (function (_React$Component) {
     this.plant = (0, _underscore.find)(props.plants, function (plant) {
       return plant.device.uuid == _this.props.params.id;
     });
-    this.filler = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTFjMTY2NzVkMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MWMxNjY3NWQxIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=";
     this.state = _storesPlantStore2['default'].getState();
     this.onChange = this.onChange.bind(this);
   }
@@ -2101,15 +2606,79 @@ var Plant = (function (_React$Component) {
   _createClass(Plant, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      var _this2 = this;
+
       _storesPlantStore2['default'].listen(this.onChange);
+      var loaded = true;
+      this.cropit = $('#image-cropper').cropit({
+        imageState: { src: this.plant.image != "" ? this.plant.image : '/img/filler.jpg' },
+        imageBackground: true,
+        onImageLoaded: function onImageLoaded() {
+          if (!loaded) _actionsPlantActions2['default'].editingImage();else loaded = false;
+        }
+      });
+      _actionsPlantActions2['default'].fetchDevice(this.props.params.id);
+      nv.addGraph(function () {
+        var chart = nv.models.lineWithFocusChart();
+
+        chart.xAxis.tickFormat(d3.format(',f'));
+
+        chart.yAxis.tickFormat(d3.format(',.2f'));
+
+        chart.y2Axis.tickFormat(d3.format(',.2f'));
+
+        d3.select('#chart1 svg').datum(_this2.testData()).transition().duration(500).call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        return chart;
+      });
+      /**************************************
+       * Simple test data generator
+       */
+    }
+  }, {
+    key: 'testData',
+    value: function testData() {
+      return this.stream_layers(3, 128, .1).map(function (data, i) {
+        return {
+          key: 'Stream' + i,
+          values: data
+        };
+      });
+    }
+  }, {
+    key: 'stream_layers',
+    value: function stream_layers(n, m, o) {
+      function stream_index(d, i) {
+        return { x: i, y: Math.max(0, d) };
+      }
+
+      if (arguments.length < 3) o = 0;
+      function bump(a) {
+        var x = 1 / (.1 + Math.random()),
+            y = 2 * Math.random() - .5,
+            z = 10 / (.1 + Math.random());
+        for (var i = 0; i < m; i++) {
+          var w = (i / m - y) * z;
+          a[i] += x * Math.exp(-w * w);
+        }
+      }
+      return d3.range(n).map(function () {
+        var a = [],
+            i;
+        for (i = 0; i < m; i++) a[i] = o + o * Math.random();
+        for (i = 0; i < 5; i++) bump(a);
+        return a.map(stream_index);
+      });
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.plant = (0, _underscore.findWhere)(nextProps.plants, function (plant) {
-        return plant.device.uuid == _this2.props.params.id;
+        return plant.device.uuid == _this3.props.params.id;
       });
     }
   }, {
@@ -2118,23 +2687,15 @@ var Plant = (function (_React$Component) {
       _storesPlantStore2['default'].unlisten(this.onChange);
     }
   }, {
-    key: 'onDrop',
-    value: function onDrop(files) {
+    key: 'saveImage',
+    value: function saveImage() {
       //Convert to bas64, resize, and then upload
-      var self = this;
-      var width = 200;
-      var height = 200;
-      files[0].convertToBase64(function (base64) {
-        var canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        var context = canvas.getContext("2d");
-        $("<img/>").attr("src", base64).load(function () {
-          context.scale(width / this.width, height / this.height);
-          context.drawImage(this, 0, 0);
-          _actionsPlantsActions2['default'].uploadImage(self.props.location, self.plant, canvas.toDataURL());
-        });
+      var image = $(this.cropit).cropit('export', {
+        type: 'image/jpeg',
+        quality: .9,
+        originalSize: false
       });
+      _actionsPlantsActions2['default'].uploadImage(this.props.location, this.plant, image);
     }
   }, {
     key: 'onChange',
@@ -2147,30 +2708,118 @@ var Plant = (function (_React$Component) {
 
       return _react2['default'].createElement(
         'div',
-        { className: 'row' },
+        null,
         _react2['default'].createElement(
           'div',
-          { className: 'col-sm-3' },
+          { className: 'row fadeInUp animated' },
           _react2['default'].createElement(
-            _reactDropzone2['default'],
-            { className: 'imageDropZone', activeClassName: 'imageDropZoneActive', onDrop: this.onDrop.bind(this), accept: 'image/*', multiple: false },
-            _react2['default'].createElement('img', { draggable: 'false', src: this.plant.image ? this.plant.image : this.filler, className: 'img-thumbnail img-responsive' })
+            'div',
+            { className: 'col-md-4 col-sm-5' },
+            _react2['default'].createElement(
+              'div',
+              { id: 'image-cropper', className: 'img-responsive' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'cropit-image-preview-container' },
+                _react2['default'].createElement('div', { className: 'cropit-image-preview', style: { width: 200, height: 200 } })
+              ),
+              _react2['default'].createElement('input', { type: 'range', style: { visibility: this.state.editingImage ? 'visible' : 'hidden' }, id: 'imageZoom', className: 'cropit-image-zoom-input' }),
+              _react2['default'].createElement('input', { type: 'file', style: { visibility: 'hidden' }, className: 'cropit-image-input' })
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'row', syle: { paddingTop: 10 } },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-6' },
+                _react2['default'].createElement(
+                  'button',
+                  { className: 'btn btn-default', onClick: function () {
+                      return $('.cropit-image-input').click();
+                    } },
+                  'Change Picture'
+                ),
+                ' '
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-6' },
+                _react2['default'].createElement(
+                  'button',
+                  { className: 'btn btn-primary', onClick: this.saveImage.bind(this) },
+                  'Save Picture'
+                )
+              )
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-7' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'row' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-4' },
+                'Name:'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-8' },
+                _react2['default'].createElement(_InlineEdit2['default'], { text: this.plant.name, className: 'pull-left', placeholder: 'Set a Name', change: _actionsPlantsActions2['default'].updateName.bind(this, this.props.location, this.plant), errorText: 'Please enter a valid name' })
+              )
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'row' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-4' },
+                'Type:'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-8' },
+                _react2['default'].createElement(_InlineEdit2['default'], { text: this.plant.type, className: 'pull-left', placeholder: 'Set a Type', change: _actionsPlantsActions2['default'].updateType.bind(this, this.props.location, this.plant), errorText: 'Please enter a valid type' })
+              )
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'row' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-4' },
+                'MAC Address:'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-8' },
+                this.state.device.mac
+              )
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'row' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-4' },
+                'Firmware:'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'col-xs-8' },
+                this.state.device.firmware
+              )
+            )
           )
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'col-sm-7' },
+          { className: 'row' },
           _react2['default'].createElement(
-            'p',
-            null,
-            'Name: ',
-            this.plant.name
-          ),
-          _react2['default'].createElement(
-            'p',
-            null,
-            'Type: ',
-            this.plant.type
+            'div',
+            { className: 'col-xs-12', id: 'chart1' },
+            _react2['default'].createElement('svg', { style: { height: 500 } })
           )
         )
       );
@@ -2183,7 +2832,7 @@ var Plant = (function (_React$Component) {
 exports['default'] = Plant;
 module.exports = exports['default'];
 
-},{"../actions/PlantActions":6,"../actions/PlantsActions":7,"../stores/PlantStore":35,"react":"react","react-dropzone":39,"underscore":"underscore"}],20:[function(require,module,exports){
+},{"../actions/PlantActions":6,"../actions/PlantsActions":7,"../stores/PlantStore":35,"./InlineEdit":17,"react":"react","underscore":"underscore"}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2205,8 +2854,6 @@ var _react = require('react');
 var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = require('react-router');
-
-//var CSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var PlantList = (function (_React$Component) {
   _inherits(PlantList, _React$Component);
@@ -2276,7 +2923,7 @@ var PlantList = (function (_React$Component) {
 
       return _react2['default'].createElement(
         'div',
-        { classNam: 'list-group' },
+        { classNam: 'list-group fadeInUp animated' },
         plants
       );
     }
@@ -2758,9 +3405,34 @@ var Profile = (function (_React$Component) {
             _react2['default'].createElement(
               'div',
               { className: 'panel-body' },
-              'Email: ',
-              _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.email || "", placeholder: 'Set an Email', validate: this.validateEmail, change: _actionsProfileActions2['default'].updateEmail, errorText: 'Please enter a valid email' }),
-              'Password:'
+              _react2['default'].createElement(
+                'div',
+                { className: 'row' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'col-sm-4' },
+                  'Email:'
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'col-sm-8' },
+                  _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.email || "", placeholder: 'Set an Email', validate: this.validateEmail, change: _actionsProfileActions2['default'].updateEmail, errorText: 'Please enter a valid email' })
+                )
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'row' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'col-sm-4' },
+                  'Password:'
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'col-sm-8' },
+                  _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.password ? "••••••••" : "Unset", placeholder: 'Set an Password', validate: this.validatePass, change: _actionsProfileActions2['default'].updatePassword, errorText: 'Please enter a valid password' })
+                )
+              )
             )
           )
         ),
@@ -3450,10 +4122,12 @@ var AuthStore = (function () {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.status = 'loggedOut';
-      setTimeout(function () {
-        //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
-        payload.router.transitionTo('/');
-      }, 1000);
+      if (payload && payload.router) {
+        setTimeout(function () {
+          //SUUUPER hacky -- makes sure the auth props can update before the transiton occurs
+          payload.router.transitionTo('/');
+        }, 1000);
+      }
     }
   }, {
     key: 'onUpdateEmail',
@@ -3629,6 +4303,8 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -3643,11 +4319,29 @@ var _actionsPlantActions2 = _interopRequireDefault(_actionsPlantActions);
 
 var _underscore = require('underscore');
 
-var PlantStore = function PlantStore() {
-  _classCallCheck(this, PlantStore);
+var PlantStore = (function () {
+  function PlantStore() {
+    _classCallCheck(this, PlantStore);
 
-  this.bindActions(_actionsPlantActions2['default']);
-};
+    this.bindActions(_actionsPlantActions2['default']);
+    this.editingImage = false;
+    this.device = {};
+  }
+
+  _createClass(PlantStore, [{
+    key: 'onEditingImage',
+    value: function onEditingImage() {
+      this.editingImage = true;
+    }
+  }, {
+    key: 'onDeviceFetched',
+    value: function onDeviceFetched(payload) {
+      this.device = payload.device;
+    }
+  }]);
+
+  return PlantStore;
+})();
 
 exports['default'] = _alt2['default'].createStore(PlantStore);
 module.exports = exports['default'];
@@ -3714,8 +4408,8 @@ var PlantsStore = (function () {
       this.loadError = err.errorMessage;
     }
   }, {
-    key: 'onPlantUpdateSuccess',
-    value: function onPlantUpdateSuccess(payload) {
+    key: 'onUpdateSuccess',
+    value: function onUpdateSuccess(payload) {
       var location = (0, _underscore.findWhere)(this.locations, { _id: payload.location._id });
       var plant = (0, _underscore.findIndex)(location.plants, { _id: payload.plant._id });
 
@@ -3723,8 +4417,8 @@ var PlantsStore = (function () {
       location.plants[plant] = payload.plant;
     }
   }, {
-    key: 'onPlantUpdateFail',
-    value: function onPlantUpdateFail(err) {
+    key: 'onUpdateFail',
+    value: function onUpdateFail(err) {
       this.loadError = err.errorMessage;
     }
   }]);
@@ -3959,224 +4653,4 @@ var SignupStore = (function () {
 exports['default'] = _alt2['default'].createStore(SignupStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../actions/SignupActions":9,"../alt":10}],39:[function(require,module,exports){
-'use strict';
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var React = require('react');
-var accept = require('attr-accept');
-
-var Dropzone = React.createClass({
-  displayName: 'Dropzone',
-
-  getDefaultProps: function getDefaultProps() {
-    return {
-      disableClick: false,
-      multiple: true
-    };
-  },
-
-  getInitialState: function getInitialState() {
-    return {
-      isDragActive: false
-    };
-  },
-
-  propTypes: {
-    onDrop: React.PropTypes.func,
-    onDropAccepted: React.PropTypes.func,
-    onDropRejected: React.PropTypes.func,
-    onDragEnter: React.PropTypes.func,
-    onDragLeave: React.PropTypes.func,
-
-    style: React.PropTypes.object,
-    activeStyle: React.PropTypes.object,
-    className: React.PropTypes.string,
-    activeClassName: React.PropTypes.string,
-    rejectClassName: React.PropTypes.string,
-
-    disableClick: React.PropTypes.bool,
-    multiple: React.PropTypes.bool,
-    accept: React.PropTypes.string
-  },
-
-  componentDidMount: function componentDidMount() {
-    this.enterCounter = 0;
-  },
-
-  allFilesAccepted: function allFilesAccepted(files) {
-    var _this = this;
-
-    return files.every(function (file) {
-      return accept(file, _this.props.accept);
-    });
-  },
-
-  onDragEnter: function onDragEnter(e) {
-    e.preventDefault();
-
-    // Count the dropzone and any children that are entered.
-    ++this.enterCounter;
-
-    // This is tricky. During the drag even the dataTransfer.files is null
-    // But Chrome implements some drag store, which is accesible via dataTransfer.items
-    var dataTransferItems = e.dataTransfer && e.dataTransfer.items ? e.dataTransfer.items : [];
-
-    // Now we need to convert the DataTransferList to Array
-    var itemsArray = Array.prototype.slice.call(dataTransferItems);
-    var allFilesAccepted = this.allFilesAccepted(itemsArray);
-
-    this.setState({
-      isDragActive: allFilesAccepted,
-      isDragReject: !allFilesAccepted
-    });
-
-    if (this.props.onDragEnter) {
-      this.props.onDragEnter(e);
-    }
-  },
-
-  onDragOver: function onDragOver(e) {
-    e.preventDefault();
-  },
-
-  onDragLeave: function onDragLeave(e) {
-    e.preventDefault();
-
-    // Only deactivate once the dropzone and all children was left.
-    if (--this.enterCounter > 0) {
-      return;
-    }
-
-    this.setState({
-      isDragActive: false,
-      isDragReject: false
-    });
-
-    if (this.props.onDragLeave) {
-      this.props.onDragLeave(e);
-    }
-  },
-
-  onDrop: function onDrop(e) {
-    e.preventDefault();
-
-    // Reset the counter along with the drag on a drop.
-    this.enterCounter = 0;
-
-    this.setState({
-      isDragActive: false,
-      isDragReject: false
-    });
-
-    var droppedFiles = e.dataTransfer ? e.dataTransfer.files : e.target.files;
-    var max = this.props.multiple ? droppedFiles.length : 1;
-    var files = [];
-
-    for (var i = 0; i < max; i++) {
-      var file = droppedFiles[i];
-      file.preview = URL.createObjectURL(file);
-      files.push(file);
-    }
-
-    if (this.props.onDrop) {
-      this.props.onDrop(files, e);
-    }
-
-    if (this.allFilesAccepted(files)) {
-      if (this.props.onDropAccepted) {
-        this.props.onDropAccepted(files, e);
-      }
-    } else {
-      if (this.props.onDropRejected) {
-        this.props.onDropRejected(files, e);
-      }
-    }
-  },
-
-  onClick: function onClick() {
-    if (!this.props.disableClick) {
-      this.open();
-    }
-  },
-
-  open: function open() {
-    var fileInput = React.findDOMNode(this.refs.fileInput);
-    fileInput.value = null;
-    fileInput.click();
-  },
-
-  render: function render() {
-
-    var className;
-    if (this.props.className) {
-      className = this.props.className;
-      if (this.state.isDragActive && this.props.activeClassName) {
-        className += ' ' + this.props.activeClassName;
-      };
-      if (this.state.isDragReject && this.props.rejectClassName) {
-        className += ' ' + this.props.rejectClassName;
-      };
-    };
-
-    var style, activeStyle;
-    if (this.props.style || this.props.activeStyle) {
-      if (this.props.style) {
-        style = this.props.style;
-      }
-      if (this.props.activeStyle) {
-        activeStyle = this.props.activeStyle;
-      }
-    } else if (!className) {
-      style = {
-        width: 200,
-        height: 200,
-        borderWidth: 2,
-        borderColor: '#666',
-        borderStyle: 'dashed',
-        borderRadius: 5
-      };
-      activeStyle = {
-        borderStyle: 'solid',
-        backgroundColor: '#eee'
-      };
-    }
-
-    var appliedStyle;
-    if (activeStyle && this.state.isDragActive) {
-      appliedStyle = _extends({}, style, activeStyle);
-    } else {
-      appliedStyle = _extends({}, style);
-    };
-
-    return React.createElement(
-      'div',
-      {
-        className: className,
-        style: appliedStyle,
-        onClick: this.onClick,
-        onDragEnter: this.onDragEnter,
-        onDragOver: this.onDragOver,
-        onDragLeave: this.onDragLeave,
-        onDrop: this.onDrop
-      },
-      this.props.children,
-      React.createElement('input', {
-        type: 'file',
-        ref: 'fileInput',
-        style: { display: 'none' },
-        multiple: this.props.multiple,
-        accept: this.props.accept,
-        onChange: this.onDrop
-      })
-    );
-  }
-
-});
-
-module.exports = Dropzone;
-
-},{"attr-accept":40,"react":"react"}],40:[function(require,module,exports){
-module.exports=function(t){function n(e){if(r[e])return r[e].exports;var o=r[e]={exports:{},id:e,loaded:!1};return t[e].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var r={};return n.m=t,n.c=r,n.p="",n(0)}([function(t,n,r){"use strict";n.__esModule=!0,r(8),r(9),n["default"]=function(t,n){if(t&&n){var r=function(){var r=n.split(","),e=t.name||"",o=t.type||"",i=o.replace(/\/.*$/,"");return{v:r.some(function(t){var n=t.trim();return"."===n.charAt(0)?e.toLowerCase().endsWith(n.toLowerCase()):/\/\*$/.test(n)?i===n.replace(/\/.*$/,""):o===n})}}();if("object"==typeof r)return r.v}return!0},t.exports=n["default"]},function(t,n){var r=t.exports={version:"1.2.2"};"number"==typeof __e&&(__e=r)},function(t,n){var r=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=r)},function(t,n,r){var e=r(2),o=r(1),i=r(4),u=r(19),c="prototype",f=function(t,n){return function(){return t.apply(n,arguments)}},s=function(t,n,r){var a,p,l,d,y=t&s.G,h=t&s.P,v=y?e:t&s.S?e[n]||(e[n]={}):(e[n]||{})[c],x=y?o:o[n]||(o[n]={});y&&(r=n);for(a in r)p=!(t&s.F)&&v&&a in v,l=(p?v:r)[a],d=t&s.B&&p?f(l,e):h&&"function"==typeof l?f(Function.call,l):l,v&&!p&&u(v,a,l),x[a]!=l&&i(x,a,d),h&&((x[c]||(x[c]={}))[a]=l)};e.core=o,s.F=1,s.G=2,s.S=4,s.P=8,s.B=16,s.W=32,t.exports=s},function(t,n,r){var e=r(5),o=r(18);t.exports=r(22)?function(t,n,r){return e.setDesc(t,n,o(1,r))}:function(t,n,r){return t[n]=r,t}},function(t,n){var r=Object;t.exports={create:r.create,getProto:r.getPrototypeOf,isEnum:{}.propertyIsEnumerable,getDesc:r.getOwnPropertyDescriptor,setDesc:r.defineProperty,setDescs:r.defineProperties,getKeys:r.keys,getNames:r.getOwnPropertyNames,getSymbols:r.getOwnPropertySymbols,each:[].forEach}},function(t,n){var r=0,e=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++r+e).toString(36))}},function(t,n,r){var e=r(20)("wks"),o=r(2).Symbol;t.exports=function(t){return e[t]||(e[t]=o&&o[t]||(o||r(6))("Symbol."+t))}},function(t,n,r){r(26),t.exports=r(1).Array.some},function(t,n,r){r(25),t.exports=r(1).String.endsWith},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){var r={}.toString;t.exports=function(t){return r.call(t).slice(8,-1)}},function(t,n,r){var e=r(10);t.exports=function(t,n,r){if(e(t),void 0===n)return t;switch(r){case 1:return function(r){return t.call(n,r)};case 2:return function(r,e){return t.call(n,r,e)};case 3:return function(r,e,o){return t.call(n,r,e,o)}}return function(){return t.apply(n,arguments)}}},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n,r){t.exports=function(t){var n=/./;try{"/./"[t](n)}catch(e){try{return n[r(7)("match")]=!1,!"/./"[t](n)}catch(o){}}return!0}},function(t,n){t.exports=function(t){try{return!!t()}catch(n){return!0}}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n,r){var e=r(16),o=r(11),i=r(7)("match");t.exports=function(t){var n;return e(t)&&(void 0!==(n=t[i])?!!n:"RegExp"==o(t))}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n,r){var e=r(2),o=r(4),i=r(6)("src"),u="toString",c=Function[u],f=(""+c).split(u);r(1).inspectSource=function(t){return c.call(t)},(t.exports=function(t,n,r,u){"function"==typeof r&&(o(r,i,t[n]?""+t[n]:f.join(String(n))),"name"in r||(r.name=n)),t===e?t[n]=r:(u||delete t[n],o(t,n,r))})(Function.prototype,u,function(){return"function"==typeof this&&this[i]||c.call(this)})},function(t,n,r){var e=r(2),o="__core-js_shared__",i=e[o]||(e[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n,r){var e=r(17),o=r(13);t.exports=function(t,n,r){if(e(n))throw TypeError("String#"+r+" doesn't accept regex!");return String(o(t))}},function(t,n,r){t.exports=!r(15)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n){var r=Math.ceil,e=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?e:r)(t)}},function(t,n,r){var e=r(23),o=Math.min;t.exports=function(t){return t>0?o(e(t),9007199254740991):0}},function(t,n,r){"use strict";var e=r(3),o=r(24),i=r(21),u="endsWith",c=""[u];e(e.P+e.F*r(14)(u),"String",{endsWith:function(t){var n=i(this,t,u),r=arguments,e=r.length>1?r[1]:void 0,f=o(n.length),s=void 0===e?f:Math.min(o(e),f),a=String(t);return c?c.call(n,a,s):n.slice(s-a.length,s)===a}})},function(t,n,r){var e=r(5),o=r(3),i=r(1).Array||Array,u={},c=function(t,n){e.each.call(t.split(","),function(t){void 0==n&&t in i?u[t]=i[t]:t in[]&&(u[t]=r(12)(Function.call,[][t],n))})};c("pop,reverse,shift,keys,values,entries",1),c("indexOf,every,some,forEach,map,filter,find,findIndex,includes",3),c("join,slice,concat,push,splice,unshift,sort,lastIndexOf,reduce,reduceRight,copyWithin,fill"),o(o.S,"Array",u)}]);
-},{}]},{},[28]);
+},{"../actions/AuthActions":2,"../actions/SignupActions":9,"../alt":10}]},{},[28]);

@@ -40,9 +40,22 @@ module.exports = function(passport) {
     })(req, res, next);
   });
 
-  //Get a current user's profile
+  //Get a current users list of locations and plants
   router.get('/', function(req, res, next) {
     res.json(req.user.locations);
+  });
+  
+  //Get a the device profile
+  router.get('/:id/device', function(req, res, next) {
+    Device.findOne({uuid: req.params.id}).execAsync().then(function(device) {
+      if (!device || device.user.toString() != req.user._id) {
+        return res.status(404).json({err: "Cannot find device!"});
+      } else {
+        return res.json(device); 
+      }
+    }).catch(function(err) {
+      next(err);
+    });
   });
   
   router.put('/:location/:id/image', function(req, res, next) {
@@ -91,8 +104,6 @@ module.exports = function(passport) {
           return device;
         }
       }
-    }).catch(function(err) {
-      res.status(404).json({err: err.message})
     }).then(function(device) {
       req.user.locations[0].plants.push({device: {id: device._id, uuid: device.uuid}, name: "NewPlant", type: "Unknown"});
       device.user = req.user._id;
@@ -100,7 +111,7 @@ module.exports = function(passport) {
     }).map(function(user, device) {
       return res.json({associated: true, device: device});
     }).catch(function(err) {
-      next(err);
+      return res.status(404).json({err: err.message})
     });
   });
 

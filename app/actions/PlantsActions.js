@@ -9,8 +9,8 @@ class PlantsActions {
       'setCurrentLocation',
       'imageUpdated',
       'imageFailed',
-      'plantUpdateSuccess',
-      'plantUpdateFail'
+      'updateSuccess',
+      'updateFail'
     );  
   }
   
@@ -25,6 +25,14 @@ class PlantsActions {
       .fail((jqXhr) => {
         this.actions.plantsDropped({errorMessage: jqXhr.responseJSON.err});
       }); 
+  }
+  
+  updateName(location, plant, name) {
+    this.actions.updatePlant(location, plant, {name: name}); 
+  }
+  
+  updateType(location, plant, type) {
+    this.actions.updatePlant(location, plant, {type: type}); 
   }
   
   updatePlant(location, plant, update) {

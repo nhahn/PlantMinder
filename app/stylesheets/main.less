@@ -33,6 +33,11 @@
 @navbar-default-link-disabled-color:       #fff;
 @navbar-default-link-disabled-bg:          transparent;
 
+// Navbar toggle
+@navbar-default-toggle-hover-bg:           #aaa;
+@navbar-default-toggle-icon-bar-bg:        #fff;
+@navbar-default-toggle-border-color:       #aaa;
+
 @btn-default-color: #58666e;
 @btn-default-border: #dee5e7;
 
@@ -914,18 +919,20 @@ label {
   -moz-transition:200ms ease;
   -o-transition:200ms ease;
   transition:200ms ease;
+  
+  &.showNet {
+      opacity: 1; 
+  }
 }
 
-#netDropDown.showNet {
-  opacity: 1; 
-}
+.plantWifi {
+  path {
+    fill: #FFFFFF;
+  }
 
-.plantWifi path {
-  fill: #FFFFFF;
-}
-
-.plantWifi text {
-  fill: #FFFFFF;
+  text {
+    fill: #FFFFFF;
+  }
 }
 
 #wifiHighlight {
@@ -934,10 +941,10 @@ label {
   -moz-transition:200ms ease;
   -o-transition:200ms ease;
   transition:200ms ease;
-}
 
-#wifiHighlight.plantWifi {
-  opacity: 1; 
+  &.plantWifi {
+    opacity: 1; 
+  }
 }
 
 .imageDropZone {
@@ -946,4 +953,97 @@ label {
 
 .imageDropZoneActive {
   
+}
+
+#connectionWindow {
+  .st0{fill:#6B8795;}
+  .st1{fill:#FFFFFF;}
+  .st3{
+    font-size:3.8213px;
+    width: 100%;
+    height: 100%;
+      
+    t {
+      left: 700px;
+      opacity: 1;  
+    }
+  }
+  .st4{fill:#4B6B26;}
+  .st5{font-size:4px;}
+  .st6{fill:#573829;}
+  .st7{font-size:3px;} 
+  
+  .webPage {
+    opacity: 0;
+    -webkit-transition:200ms ease;
+    -moz-transition:200ms ease;
+    -o-transition:200ms ease;
+    transition:200ms ease;
+    
+    &.display {
+      opacity: 1 
+        
+    }
+  }
+  
+  .typing {
+    width: 18ch;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: .1em solid #333;
+    -webkit-animation: typing 5s steps(15, end), caret 0.9s step-end infinite;
+    animation: typing 5s steps(15, end), caret 0.9s step-end infinite;
+  }
+}
+
+
+/**
+*
+* Heatbeat Animation
+*
+**/
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(0.8);
+  }
+  14% {
+    transform: scale(1);
+  }
+  28% {
+    transform: scale(0.8);
+  }
+  42% {
+    transform: scale(1);
+  }
+  70% {
+    transform: scale(0.8);
+  }
+}
+
+.heartbeat {
+  animation: heartbeat 1300ms ease 0s infinite normal;
+  transform: scale(0.7);
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+ 
+
+
+
+
+.cropit-image-background {
+  opacity: .2;
+}
+
+/*
+ * If the slider or anything else is covered by the background image,
+ * use relative or absolute position on it
+ */
+input.cropit-image-zoom-input {
+  position: relative;
 }

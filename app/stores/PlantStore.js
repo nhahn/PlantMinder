@@ -5,6 +5,16 @@ import {assign} from 'underscore';
 class PlantStore {
   constructor() {
     this.bindActions(PlantActions);
+    this.editingImage = false;
+    this.device = {};
+  }
+  
+  onEditingImage() {
+    this.editingImage = true;
+  }
+  
+  onDeviceFetched(payload) {
+    this.device = payload.device; 
   }
 }
 

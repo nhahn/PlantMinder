@@ -20,6 +20,7 @@ var production = process.env.NODE_ENV === 'production';
 var dependencies = [
   'alt',
   'react',
+  'react/addons',
   'react-router',
   'underscore',
   'react-select',
@@ -40,10 +41,10 @@ gulp.task('vendor', function() {
     'vendor/toastr/toastr.js',
     'vendor/scrollmagic/scrollmagic/minified/ScrollMagic.min.js',
     'vendor/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js',
-//'vendor/scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js',
+    'vendor/cropit/dist/jquery.cropit.js',
     'vendor/gsap/src/minified/TweenMax.min.js',
     'vendor/d3/d3.js',
-    'vendor/nvd3/build/nv.d3.js'
+    'vendor/nvd3/build/nv.d3.js',
   ]).pipe(concat('vendor.js'))
     .pipe(gulpif(production, uglify({ mangle: false })))
     .pipe(gulp.dest('public/js'));

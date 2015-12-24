@@ -1,7 +1,5 @@
 import React from 'react';
 import {Link} from 'react-router';
-//var CSSTransitionGroup = React.addons.CSSTransitionGroup;
-
 
 class PlantList extends React.Component {
   constructor(props) {
@@ -41,7 +39,7 @@ class PlantList extends React.Component {
     });
     
     return (
-      <div classNam="list-group">
+      <div classNam="list-group fadeInUp animated">
         {plants}
       </div>
     );

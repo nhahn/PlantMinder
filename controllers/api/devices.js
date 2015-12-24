@@ -13,6 +13,7 @@ var User = rootRequire('models/plantRecord');
 var Device = rootRequire('models/device');
 var PlantRecord = rootRequire('models/plantRecord');
 var compareVersions = require('compare-version');
+var oh = require('organic_hash')();
 
 /*
 *
@@ -46,11 +47,11 @@ router.get('/update', function(req, res, next) {
 });
 
 //Get all tasks (for the logged in user)
-router.post('/:deviceID/newData', function(req, res, next) {
+router.post('/:deviceMAC/newData', function(req, res, next) {
   var buff = req.body;
   var time = req.get('x-file-timestamp');
   
-  Device.findOne({uuid: req.params.deviceID}).execAsync().then(function(device) {
+  Device.findOne({mac: req.params.deviceMAC}).execAsync().then(function(device) {
     if (!device) { return next(err); }
     for(var i = 0; i < buff.length / 16; i++){
       var idx = ['humid', 'temp', 'lux', 'hygro'];
@@ -74,20 +75,22 @@ router.post('/:deviceID/newData', function(req, res, next) {
 });
 
 //Get a specific task (for the logged in user)
-router.get('/:deviceID/getConfig', function(req, res, next) {
+router.get('/:deviceMAC/getConfig', function(req, res, next) {
   var deviceInfo = {
     mac: req.get('x-ESP8266-STA-MAC'),
     chipSize: req.get('x-ESP8266-chip-size'),
     version: req.get('x-ESP8266-version')
   };
-  Device.findOne({uuid: req.params.deviceID}).execAsync().then(function(device) {
+  var hash = oh.hash(req.params.deviceMAC);
+  Device.findOne({uuid: hash}).execAsync().then(function(device) {
     if (device) {return res.send({time: "" + Date.now(), 
-                                  config: device.config, 
+                                  config: device.config,
+                                  uuid: device.uuid,
                                   associated: (device.user != null)}); }
-    var device = new Device({uuid: req.params.deviceID, 
+    var device = new Device({uuid: hash, 
                              chipSize: deviceInfo.chipSize, 
                              firmware: deviceInfo.version, 
-                             mac: deviceInfo.mac})
+                             mac: req.params.deviceMAC})
     device.save(function(err, device) {
       if (err) {
         res.status(500);
@@ -95,6 +98,7 @@ router.get('/:deviceID/getConfig', function(req, res, next) {
       }
       res.send({time: "" + Date.now(), 
                 config: device.config, 
+                uuid: device.uuid,
                 associated: (device.user != null)});
       return;
     });

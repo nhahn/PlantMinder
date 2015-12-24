@@ -4,7 +4,7 @@ var ObjectId = mongoose.Schema.ObjectId;
 
 var plantSchema = new mongoose.Schema({
       image: String,
-      device: {id: ObjectId, uuid: String},
+      device: {id: {type: ObjectId, required: true}, uuid: {type: String, required: true}},
       name: {type: String, required: true},
       type: {type: String, required: true},
       outside: {type: Boolean, default: false},

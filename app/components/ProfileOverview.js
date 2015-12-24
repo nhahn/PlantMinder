@@ -19,8 +19,22 @@ class Profile extends React.Component {
           <div className="panel panel-default">
             <div className="panel-heading">Profile</div>
             <div className="panel-body">
-              Email: <InlineEdit className="pull-right" text={this.props.user.local.email || ""} placeholder="Set an Email" validate={this.validateEmail} change={ProfileActions.updateEmail} errorText="Please enter a valid email"/>
-              Password: 
+              <div className="row">
+                <div className="col-sm-4">
+                  Email: 
+                </div>
+                <div className="col-sm-8">
+                  <InlineEdit className="pull-right" text={this.props.user.local.email || ""} placeholder="Set an Email" validate={this.validateEmail} change={ProfileActions.updateEmail} errorText="Please enter a valid email"/>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-4">
+                  Password: 
+                </div>
+                <div className="col-sm-8">
+                  <InlineEdit className="pull-right" text={(this.props.user.local.password)? "••••••••" : "Unset"} placeholder="Set an Password" validate={this.validatePass} change={ProfileActions.updatePassword} errorText="Please enter a valid password"/>
+                </div>
+              </div> 
             </div>
           </div>
         </div>

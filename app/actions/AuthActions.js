@@ -23,7 +23,7 @@ class AuthActions {
       data: { email: payload.email, password: payload.password }
     })  
       .done((data) => {
-        assign(payload, {message: data.message});
+        assign(payload, {token: data.token});
         this.actions.authSuccess(payload);
       })  
       .fail((jqXhr) => {

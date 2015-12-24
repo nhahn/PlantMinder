@@ -8,7 +8,7 @@ var deviceSchema = new mongoose.Schema({
   user: {type: ObjectId},
   chipSize: Number,
   firmware: String,
-  mac: String,
+  mac: {type: String, unique: true, index: true},
   lastConnection: {type: Date, required: true, default: Date.now},
   config: {
     fileSize: {type: Number, default: 600}, //time between transfers (fileSize / 20) * 20
