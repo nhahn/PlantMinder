@@ -10,6 +10,7 @@ var mongoose = require('mongoose');
 module.exports = function(passport) {
   
   router.use('/plants', require('./plants')(passport));
+  router.use('/stats', require('./stats')(passport));
   router.use('/profile', require('./profile')(passport));
   router.use('/devices', require('./devices')); 
   

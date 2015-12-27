@@ -40,7 +40,7 @@ class Profile extends React.Component {
           <div className="col-sm-3">
             <ul className="nav nav-pills nav-stacked">
               <NavLink to="/profile">Overview</NavLink>
-              <NavLink to="/profile/edit">Edit Profile</NavLink>
+              {/*<NavLink to="/profile/edit">Edit Profile</NavLink>*/}
               <NavLink to="/profile/notifications">Notifications</NavLink>
             </ul>
           </div>

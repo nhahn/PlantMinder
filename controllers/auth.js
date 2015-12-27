@@ -151,14 +151,19 @@ module.exports = function(passport) {
 
   router.post('/connect/local', passport.authenticate('local-signup', {
       successRedirect : '/profile', // redirect to the secure profile section
-      failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
+      failureRedirect : '/profile', // redirect back to the signup page if there is an error
       failureFlash : true // allow flash messages
   }));
 
   // facebook -------------------------------
 
   // send to facebook to do the authentication
-  router.get('/connect/facebook', passport.authorize('facebook', { scope : 'email' }));
+  router.get('/connect/facebook', function(req, res) {
+    if (!req.user)
+      return res.status(401).json({err: "Cannot use connect method without signing in"});
+    var token = req.get('Authorization').substring(4);
+    passport.authorize('facebook', { scope : 'email', state: token})(req,res);
+  });
 
   // handle the callback after facebook has authorized the user
   router.get('/connect/facebook/callback',
@@ -170,7 +175,13 @@ module.exports = function(passport) {
   // google ---------------------------------
 
   // send to google to do the authentication
-  router.get('/connect/google', passport.authorize('google', { scope : ['profile', 'email'] }));
+  router.get('/connect/google', function(req, res) {
+    if (!req.user)
+      return res.status(401).json({err: "Cannot use connect method without signing in"});
+    var token = req.get('Authorization').substring(4);
+    passport.authorize('google', { scope : ['profile', 'email'], state: token})(req, res);
+  });
+                                  
 
   // the callback after google has authorized the user
   router.get('/connect/google/callback',

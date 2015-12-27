@@ -4,9 +4,12 @@ import {assign} from 'underscore';
 class PlantActions {
   constructor() {
     this.generateActions(
-      'editingImage',
       'deviceFetched',
-      'deviceMissed'
+      'deviceMissed',
+      'recordsRetreived',
+      'recordsError',
+      'chartRange',
+      'tempScale'
     );  
   }
   
@@ -21,6 +24,19 @@ class PlantActions {
       .fail((jqXhr) => {
         this.actions.deviceMissed({errorMessage: jqXhr.responseJSON.err});
       }); 
+  }
+    
+  fetchRecords(id, frame) {
+    $.ajax({
+      type: 'GET',
+      url: '/api/stats/'+id+"/"+frame,
+    })  
+      .done((data) => {
+        this.actions.recordsRetreived(data);
+      })  
+      .fail((jqXhr) => {
+        this.actions.recordsError({errorMessage: jqXhr.responseJSON.err});
+      });
   }
 
 }

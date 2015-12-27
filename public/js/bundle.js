@@ -231,7 +231,7 @@ var PlantActions = (function () {
   function PlantActions() {
     _classCallCheck(this, PlantActions);
 
-    this.generateActions('editingImage', 'deviceFetched', 'deviceMissed');
+    this.generateActions('deviceFetched', 'deviceMissed', 'recordsRetreived', 'recordsError', 'chartRange', 'tempScale');
   }
 
   _createClass(PlantActions, [{
@@ -246,6 +246,20 @@ var PlantActions = (function () {
         _this.actions.deviceFetched({ device: data });
       }).fail(function (jqXhr) {
         _this.actions.deviceMissed({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }, {
+    key: 'fetchRecords',
+    value: function fetchRecords(id, frame) {
+      var _this2 = this;
+
+      $.ajax({
+        type: 'GET',
+        url: '/api/stats/' + id + "/" + frame
+      }).done(function (data) {
+        _this2.actions.recordsRetreived(data);
+      }).fail(function (jqXhr) {
+        _this2.actions.recordsError({ errorMessage: jqXhr.responseJSON.err });
       });
     }
   }]);
@@ -413,6 +427,36 @@ var ProfileActions = (function () {
         _this3.actions.updateUser({ user: data });
       }).fail(function (jqXhr) {
         _this3.actions.updateUserFail({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }, {
+    key: 'updateImage',
+    value: function updateImage(image) {
+      var _this4 = this;
+
+      $.ajax({
+        type: 'POST',
+        url: '/api/profile/update/image',
+        data: { image: image }
+      }).done(function (data) {
+        _this4.actions.updateUser({ user: data });
+      }).fail(function (jqXhr) {
+        _this4.actions.updateUserFail({ errorMessage: jqXhr.responseJSON.err });
+      });
+    }
+  }, {
+    key: 'savePhone',
+    value: function savePhone(phone, carrier, sms) {
+      var _this5 = this;
+
+      $.ajax({
+        type: 'POST',
+        url: '/api/profile/update/phone',
+        data: { phone: phone, carrier: carrier, sms: sms }
+      }).done(function (data) {
+        _this5.actions.updateUser({ user: data });
+      }).fail(function (jqXhr) {
+        _this5.actions.updateUserFail({ errorMessage: jqXhr.responseJSON.err });
       });
     }
   }]);
@@ -1092,7 +1136,7 @@ exports['default'] = AddPlant;
 module.exports = exports['default'];
 /*Battery Animation*/ /*Switch Animation*/ /*Network Animation*/
 
-},{"../actions/AddPlantActions":1,"../stores/AddPlantStore":30,"react":"react","underscore":"underscore"}],12:[function(require,module,exports){
+},{"../actions/AddPlantActions":1,"../stores/AddPlantStore":32,"react":"react","underscore":"underscore"}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1232,7 +1276,7 @@ App.contextTypes = {
 exports['default'] = App;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../actions/HomeActions":4,"../stores/AuthStore":31,"./Footer":15,"./Navbar":18,"react":"react","react-router":"react-router","underscore":"underscore"}],13:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../actions/HomeActions":4,"../stores/AuthStore":33,"./Footer":17,"./Navbar":20,"react":"react","react-router":"react-router","underscore":"underscore"}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1463,7 +1507,260 @@ Auth.contextTypes = {
 exports['default'] = Auth;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../stores/AuthStore":31,"react":"react","underscore":"underscore"}],14:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../stores/AuthStore":33,"react":"react","underscore":"underscore"}],14:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _underscore = require('underscore');
+
+var Plant = (function (_React$Component) {
+  _inherits(Plant, _React$Component);
+
+  function Plant(props) {
+    _classCallCheck(this, Plant);
+
+    _get(Object.getPrototypeOf(Plant.prototype), 'constructor', this).call(this, props);
+    this.id = (0, _underscore.uniqueId)('chart_');
+  }
+
+  _createClass(Plant, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var labels = this.props.labels.length < 1 ? ['', ''] : this.props.labels;
+      var data = this.props.labels.length < 1 ? [[0, 0]] : this.props.data;
+
+      this.chart = new Chartist.Line("#" + this.id, {
+        labels: labels,
+        series: data
+      }, {
+        //showArea: true,
+        chartPadding: {
+          right: 40
+        }
+      });
+
+      // Let's put a sequence number aside so we can use it in the event callbacks
+      var seq = 0,
+          delays = 40,
+          durations = 500;
+
+      // Once the chart is fully created we reset the sequence
+      this.chart.on('created', function () {
+        seq = 0;
+      });
+
+      // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+      this.chart.on('draw', function (data) {
+        if (data.type === 'line' || data.type === 'area') {
+          data.element.animate({
+            d: {
+              begin: 2000 * data.index,
+              dur: 2000,
+              from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+              to: data.path.clone().stringify(),
+              easing: Chartist.Svg.Easing.easeOutQuint
+            }
+          });
+        }
+      });
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.labels == this.props.labels && nextProps.data == this.props.data) return;
+      var labels = nextProps.labels.length < 1 ? ['', ''] : nextProps.labels;
+      var data = nextProps.labels.length < 1 ? [[0, 0]] : nextProps.data;
+
+      this.chart.update({
+        labels: labels,
+        series: data
+      });
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this.chart.detach();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'div',
+        null,
+        _react2['default'].createElement(
+          'div',
+          { className: 'row' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-xs-2 col-sm-1' },
+            _react2['default'].createElement('img', { src: this.props.img })
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-xs-5 col-sm-5' },
+            _react2['default'].createElement(
+              'h4',
+              null,
+              this.props.name
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-xs-5 col-sm-5' },
+            this.props.children
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'row' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-xs-12' },
+            _react2['default'].createElement('div', { className: this.props.className + " " + this.props.aspectRatio, id: this.id })
+          )
+        )
+      );
+    }
+  }]);
+
+  return Plant;
+})(_react2['default'].Component);
+
+exports['default'] = Plant;
+module.exports = exports['default'];
+
+},{"react":"react","underscore":"underscore"}],15:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var Cropper = (function (_React$Component) {
+  _inherits(Cropper, _React$Component);
+
+  function Cropper(props) {
+    _classCallCheck(this, Cropper);
+
+    _get(Object.getPrototypeOf(Cropper.prototype), 'constructor', this).call(this, props);
+    this.state = {
+      editingImage: false
+    };
+  }
+
+  _createClass(Cropper, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this = this;
+
+      var loaded = true;
+      this.cropit = $('#image-cropper').cropit({
+        imageState: { src: this.props.image ? this.props.image : this.props.filler },
+        imageBackground: true,
+        onImageLoaded: function onImageLoaded() {
+          if (!loaded) _this.setState({ editingImage: true });else loaded = false;
+        }
+      });
+    }
+  }, {
+    key: 'saveImage',
+    value: function saveImage() {
+      //Convert to bas64, resize, and then upload
+      var image = $(this.cropit).cropit('export', {
+        type: 'image/jpeg',
+        quality: .9,
+        originalSize: false
+      });
+      this.props.uploadImage(image);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {}
+  }, {
+    key: 'render',
+    value: function render() {
+
+      return _react2['default'].createElement(
+        'div',
+        null,
+        _react2['default'].createElement(
+          'div',
+          { style: { height: 250, position: 'relative', overflow: 'hidden' } },
+          _react2['default'].createElement(
+            'div',
+            { style: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', paddingLeft: 30 } },
+            _react2['default'].createElement(
+              'div',
+              { id: 'image-cropper', className: 'img-responsive' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'cropit-image-preview-container' },
+                _react2['default'].createElement('div', { className: 'cropit-image-preview', style: { width: 200, height: 200 } })
+              ),
+              _react2['default'].createElement('input', { type: 'range', style: { width: 200, visibility: this.state.editingImage ? 'visible' : 'hidden' }, id: 'imageZoom', className: 'cropit-image-zoom-input' }),
+              _react2['default'].createElement('input', { type: 'file', style: { visibility: 'hidden' }, className: 'cropit-image-input' })
+            )
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'row', syle: { paddingTop: 10 }, style: { textAlign: 'center' } },
+          _react2['default'].createElement(
+            'button',
+            { className: 'btn btn-default btn-space', onClick: function () {
+                return $('.cropit-image-input').click();
+              } },
+            'Change Picture'
+          ),
+          ' ',
+          _react2['default'].createElement(
+            'button',
+            { className: 'btn btn-primary', onClick: this.saveImage.bind(this) },
+            'Save Picture'
+          )
+        )
+      );
+    }
+  }]);
+
+  return Cropper;
+})(_react2['default'].Component);
+
+exports['default'] = Cropper;
+module.exports = exports['default'];
+
+},{"react":"react"}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1737,7 +2034,7 @@ var Feedback = (function (_React$Component) {
 exports['default'] = Feedback;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],15:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1876,7 +2173,7 @@ var Footer = (function (_React$Component) {
 exports['default'] = Footer;
 module.exports = exports['default'];
 
-},{"../actions/FooterActions":3,"../stores/FooterStore":32,"react":"react","react-router":"react-router"}],16:[function(require,module,exports){
+},{"../actions/FooterActions":3,"../stores/FooterStore":34,"react":"react","react-router":"react-router"}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2131,7 +2428,7 @@ var Home = (function (_React$Component) {
 exports['default'] = Home;
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":4,"../stores/HomeStore":33,"react":"react","react-router":"react-router"}],17:[function(require,module,exports){
+},{"../actions/HomeActions":4,"../stores/HomeStore":35,"react":"react","react-router":"react-router"}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2304,7 +2601,7 @@ InlineEdit.propTypes = {
 exports['default'] = InlineEdit;
 module.exports = exports['default'];
 
-},{"react":"react"}],18:[function(require,module,exports){
+},{"react":"react"}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2548,7 +2845,7 @@ Navbar.contextTypes = {
 exports['default'] = Navbar;
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../actions/HomeActions":4,"../actions/NavbarActions":5,"../stores/AuthStore":31,"../stores/HomeStore":33,"../stores/NavbarStore":34,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],19:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../actions/HomeActions":4,"../actions/NavbarActions":5,"../stores/AuthStore":33,"../stores/HomeStore":35,"../stores/NavbarStore":36,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2587,6 +2884,16 @@ var _InlineEdit2 = _interopRequireDefault(_InlineEdit);
 
 var _underscore = require('underscore');
 
+var _reactBootstrap = require('react-bootstrap');
+
+var _Chart = require('./Chart');
+
+var _Chart2 = _interopRequireDefault(_Chart);
+
+var _Cropper = require('./Cropper');
+
+var _Cropper2 = _interopRequireDefault(_Cropper);
+
 var Plant = (function (_React$Component) {
   _inherits(Plant, _React$Component);
 
@@ -2606,96 +2913,22 @@ var Plant = (function (_React$Component) {
   _createClass(Plant, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this2 = this;
-
       _storesPlantStore2['default'].listen(this.onChange);
-      var loaded = true;
-      this.cropit = $('#image-cropper').cropit({
-        imageState: { src: this.plant.image != "" ? this.plant.image : '/img/filler.jpg' },
-        imageBackground: true,
-        onImageLoaded: function onImageLoaded() {
-          if (!loaded) _actionsPlantActions2['default'].editingImage();else loaded = false;
-        }
-      });
       _actionsPlantActions2['default'].fetchDevice(this.props.params.id);
-      nv.addGraph(function () {
-        var chart = nv.models.lineWithFocusChart();
-
-        chart.xAxis.tickFormat(d3.format(',f'));
-
-        chart.yAxis.tickFormat(d3.format(',.2f'));
-
-        chart.y2Axis.tickFormat(d3.format(',.2f'));
-
-        d3.select('#chart1 svg').datum(_this2.testData()).transition().duration(500).call(chart);
-
-        nv.utils.windowResize(chart.update);
-
-        return chart;
-      });
-      /**************************************
-       * Simple test data generator
-       */
-    }
-  }, {
-    key: 'testData',
-    value: function testData() {
-      return this.stream_layers(3, 128, .1).map(function (data, i) {
-        return {
-          key: 'Stream' + i,
-          values: data
-        };
-      });
-    }
-  }, {
-    key: 'stream_layers',
-    value: function stream_layers(n, m, o) {
-      function stream_index(d, i) {
-        return { x: i, y: Math.max(0, d) };
-      }
-
-      if (arguments.length < 3) o = 0;
-      function bump(a) {
-        var x = 1 / (.1 + Math.random()),
-            y = 2 * Math.random() - .5,
-            z = 10 / (.1 + Math.random());
-        for (var i = 0; i < m; i++) {
-          var w = (i / m - y) * z;
-          a[i] += x * Math.exp(-w * w);
-        }
-      }
-      return d3.range(n).map(function () {
-        var a = [],
-            i;
-        for (i = 0; i < m; i++) a[i] = o + o * Math.random();
-        for (i = 0; i < 5; i++) bump(a);
-        return a.map(stream_index);
-      });
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var _this3 = this;
+      var _this2 = this;
 
       this.plant = (0, _underscore.findWhere)(nextProps.plants, function (plant) {
-        return plant.device.uuid == _this3.props.params.id;
+        return plant.device.uuid == _this2.props.params.id;
       });
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       _storesPlantStore2['default'].unlisten(this.onChange);
-    }
-  }, {
-    key: 'saveImage',
-    value: function saveImage() {
-      //Convert to bas64, resize, and then upload
-      var image = $(this.cropit).cropit('export', {
-        type: 'image/jpeg',
-        quality: .9,
-        originalSize: false
-      });
-      _actionsPlantsActions2['default'].uploadImage(this.props.location, this.plant, image);
     }
   }, {
     key: 'onChange',
@@ -2715,42 +2948,7 @@ var Plant = (function (_React$Component) {
           _react2['default'].createElement(
             'div',
             { className: 'col-md-4 col-sm-5' },
-            _react2['default'].createElement(
-              'div',
-              { id: 'image-cropper', className: 'img-responsive' },
-              _react2['default'].createElement(
-                'div',
-                { className: 'cropit-image-preview-container' },
-                _react2['default'].createElement('div', { className: 'cropit-image-preview', style: { width: 200, height: 200 } })
-              ),
-              _react2['default'].createElement('input', { type: 'range', style: { visibility: this.state.editingImage ? 'visible' : 'hidden' }, id: 'imageZoom', className: 'cropit-image-zoom-input' }),
-              _react2['default'].createElement('input', { type: 'file', style: { visibility: 'hidden' }, className: 'cropit-image-input' })
-            ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'row', syle: { paddingTop: 10 } },
-              _react2['default'].createElement(
-                'div',
-                { className: 'col-xs-6' },
-                _react2['default'].createElement(
-                  'button',
-                  { className: 'btn btn-default', onClick: function () {
-                      return $('.cropit-image-input').click();
-                    } },
-                  'Change Picture'
-                ),
-                ' '
-              ),
-              _react2['default'].createElement(
-                'div',
-                { className: 'col-xs-6' },
-                _react2['default'].createElement(
-                  'button',
-                  { className: 'btn btn-primary', onClick: this.saveImage.bind(this) },
-                  'Save Picture'
-                )
-              )
-            )
+            _react2['default'].createElement(_Cropper2['default'], { uploadImage: _actionsPlantsActions2['default'].uploadImage.bind(this, this.props.location, this.plant), filler: '/img/filler.jpg', image: this.plant.image })
           ),
           _react2['default'].createElement(
             'div',
@@ -2810,18 +3008,59 @@ var Plant = (function (_React$Component) {
                 { className: 'col-xs-8' },
                 this.state.device.firmware
               )
-            )
+            ),
+            _react2['default'].createElement('hr', null),
+            _react2['default'].createElement('div', { className: 'row' })
           )
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'row' },
+          { className: 'row', style: { paddingBottom: 20, paddingTop: 20 } },
           _react2['default'].createElement(
             'div',
-            { className: 'col-xs-12', id: 'chart1' },
-            _react2['default'].createElement('svg', { style: { height: 500 } })
+            { className: 'col-xs-12' },
+            _react2['default'].createElement(
+              _reactBootstrap.ButtonGroup,
+              null,
+              _react2['default'].createElement(
+                _reactBootstrap.Button,
+                { active: this.state.chartLevel == 'hourly', bsSize: 'sm', onClick: _actionsPlantActions2['default'].chartRange.bind(this, 'hourly') },
+                'Hourly'
+              ),
+              _react2['default'].createElement(
+                _reactBootstrap.Button,
+                { active: this.state.chartLevel == 'weekly', bsSize: 'sm', onClick: _actionsPlantActions2['default'].chartRange.bind(this, 'weekly') },
+                'Weekly'
+              ),
+              _react2['default'].createElement(
+                _reactBootstrap.Button,
+                { active: this.state.chartLevel == 'monthly', bsSize: 'sm', onClick: _actionsPlantActions2['default'].chartRange.bind(this, 'monthly') },
+                'Monthly'
+              )
+            )
           )
-        )
+        ),
+        _react2['default'].createElement(_Chart2['default'], { aspectRatio: 'ct-double-octave', className: 'ct-lux', labels: this.state.labels, data: this.state.luxData, img: '/img/sun.svg', name: 'Sunlight' }),
+        _react2['default'].createElement(_Chart2['default'], { aspectRatio: 'ct-double-octave', className: 'ct-soil', labels: this.state.labels, data: this.state.soilData, img: '/img/watering_can.svg', name: 'Soil Moisture' }),
+        _react2['default'].createElement(
+          _Chart2['default'],
+          { aspectRatio: 'ct-double-octave', className: 'ct-temp', labels: this.state.labels, data: this.state.tempData, img: '/img/thermometer.svg', name: 'Temperature' },
+          _react2['default'].createElement(
+            _reactBootstrap.ButtonGroup,
+            { className: 'pull-right' },
+            _react2['default'].createElement(
+              _reactBootstrap.Button,
+              { active: this.state.tempScale == 'F', bsSize: 'sm', onClick: _actionsPlantActions2['default'].tempScale.bind(this, 'F') },
+              'F'
+            ),
+            _react2['default'].createElement(
+              _reactBootstrap.Button,
+              { active: this.state.tempScale == 'C', bsSize: 'sm', onClick: _actionsPlantActions2['default'].tempScale.bind(this, 'C') },
+              'C'
+            )
+          )
+        ),
+        _react2['default'].createElement(_Chart2['default'], { aspectRatio: 'ct-double-octave', className: 'ct-humid', labels: this.state.labels, data: this.state.humidData, img: '/img/humidity.svg', name: 'Humidity' })
       );
     }
   }]);
@@ -2832,7 +3071,7 @@ var Plant = (function (_React$Component) {
 exports['default'] = Plant;
 module.exports = exports['default'];
 
-},{"../actions/PlantActions":6,"../actions/PlantsActions":7,"../stores/PlantStore":35,"./InlineEdit":17,"react":"react","underscore":"underscore"}],20:[function(require,module,exports){
+},{"../actions/PlantActions":6,"../actions/PlantsActions":7,"../stores/PlantStore":37,"./Chart":14,"./Cropper":15,"./InlineEdit":19,"react":"react","react-bootstrap":"react-bootstrap","underscore":"underscore"}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2935,7 +3174,7 @@ var PlantList = (function (_React$Component) {
 exports['default'] = PlantList;
 module.exports = exports['default'];
 
-},{"react":"react","react-router":"react-router"}],21:[function(require,module,exports){
+},{"react":"react","react-router":"react-router"}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3025,7 +3264,7 @@ var Plants = (function (_React$Component) {
           { className: 'row' },
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-3' },
+            { className: 'col-sm-2' },
             _react2['default'].createElement(
               'h3',
               null,
@@ -3040,7 +3279,7 @@ var Plants = (function (_React$Component) {
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'col-sm-9' },
+            { className: 'col-sm-10' },
             _react2['default'].createElement(
               'h3',
               null,
@@ -3086,7 +3325,7 @@ var Plants = (function (_React$Component) {
 exports['default'] = Plants;
 module.exports = exports['default'];
 
-},{"../actions/PlantsActions":7,"../stores/PlantsStore":36,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],22:[function(require,module,exports){
+},{"../actions/PlantsActions":7,"../stores/PlantsStore":38,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3189,11 +3428,6 @@ var Profile = (function (_React$Component) {
               ),
               _react2['default'].createElement(
                 NavLink,
-                { to: '/profile/edit' },
-                'Edit Profile'
-              ),
-              _react2['default'].createElement(
-                NavLink,
                 { to: '/profile/notifications' },
                 'Notifications'
               )
@@ -3241,8 +3475,9 @@ var Profile = (function (_React$Component) {
 
 exports['default'] = Profile;
 module.exports = exports['default'];
+/*<NavLink to="/profile/edit">Edit Profile</NavLink>*/
 
-},{"../actions/ProfileActions":8,"../stores/ProfileStore":37,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],23:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"../stores/ProfileStore":39,"react":"react","react-router":"react-router","react-router-active-component":"react-router-active-component"}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3291,7 +3526,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":8,"react":"react","react-router":"react-router"}],24:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"react":"react","react-router":"react-router"}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3340,7 +3575,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":8,"react":"react","react-router":"react-router"}],25:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"react":"react","react-router":"react-router"}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3371,6 +3606,16 @@ var _InlineEdit = require('./InlineEdit');
 
 var _InlineEdit2 = _interopRequireDefault(_InlineEdit);
 
+var _smsAddress = require('sms-address');
+
+var _smsAddress2 = _interopRequireDefault(_smsAddress);
+
+var _underscore = require('underscore');
+
+var _Cropper = require('./Cropper');
+
+var _Cropper2 = _interopRequireDefault(_Cropper);
+
 var Profile = (function (_React$Component) {
   _inherits(Profile, _React$Component);
 
@@ -3378,6 +3623,13 @@ var Profile = (function (_React$Component) {
     _classCallCheck(this, Profile);
 
     _get(Object.getPrototypeOf(Profile.prototype), 'constructor', this).call(this, props);
+    this.state = {
+      phone: this.props.user.phone || "",
+      carrier: this.props.user.carrier || "",
+      sms: this.props.user.sms || false,
+      error: false,
+      helpBlock: ''
+    };
   }
 
   _createClass(Profile, [{
@@ -3386,51 +3638,144 @@ var Profile = (function (_React$Component) {
       return email.match(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
     }
   }, {
+    key: 'validatePhone',
+    value: function validatePhone() {
+      if (!this.state.phone.match(/^(\+0?1\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/)) {
+        this.setState({ helpBlock: 'Please enter a valid phone number', error: 'has-error' });
+        return false;
+      }return true;
+    }
+  }, {
+    key: 'updatePhone',
+    value: function updatePhone(event) {
+      event.stopPropagation();
+      var numbers = event.target.value.replace(/\D/g, ''),
+          char = { 0: '(', 3: ') ', 6: '-' };
+      var phone = '';
+      for (var i = 0; i < numbers.length; i++) {
+        phone += (char[i] || '') + numbers[i];
+      }
+      this.setState({ phone: phone, helpBlock: '', error: '' });
+    }
+  }, {
+    key: 'setCarrier',
+    value: function setCarrier(event) {
+      event.stopPropagation();
+      this.setState({ carrier: event.target.value });
+    }
+  }, {
+    key: 'checkBox',
+    value: function checkBox(event) {
+      event.stopPropagation();
+      this.setState({ sms: event.target.checked });
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit() {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!this.state.carrier) return this.setState({ helpBlock: 'Please select a carrier', error: 'has-error' });
+
+      if (this.validatePhone()) _actionsProfileActions2['default'].savePhone(this.state.phone, this.state.carrier, this.state.sms);
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+      this.setState({
+        phone: this.props.user.phone || "",
+        carrier: this.props.user.carrier || "",
+        sms: this.props.user.sms || false,
+        helpBlock: '', error: ''
+      });
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      this.setState({
+        phone: nextProps.user.phone || this.state.phone,
+        carrier: nextProps.user.carrier || this.state.carrier,
+        sms: nextProps.user.sms || this.state.sms
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var _this = this;
+
+      var carriers = (0, _underscore.map)(_smsAddress2['default'].carriers, function (value, key) {
+        return _react2['default'].createElement(
+          'option',
+          { value: value, key: key },
+          key
+        );
+      });
+
       return _react2['default'].createElement(
         'div',
-        { className: 'row' },
+        null,
         _react2['default'].createElement(
           'div',
-          { className: 'col-sm-6' },
+          { className: 'row' },
           _react2['default'].createElement(
             'div',
-            { className: 'panel panel-default' },
+            { className: 'col-sm-6' },
             _react2['default'].createElement(
               'div',
-              { className: 'panel-heading' },
-              'Profile'
-            ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'panel-body' },
+              { className: 'panel panel-default' },
               _react2['default'].createElement(
                 'div',
-                { className: 'row' },
-                _react2['default'].createElement(
-                  'div',
-                  { className: 'col-sm-4' },
-                  'Email:'
-                ),
-                _react2['default'].createElement(
-                  'div',
-                  { className: 'col-sm-8' },
-                  _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.email || "", placeholder: 'Set an Email', validate: this.validateEmail, change: _actionsProfileActions2['default'].updateEmail, errorText: 'Please enter a valid email' })
-                )
+                { className: 'panel-heading' },
+                'Picture'
               ),
               _react2['default'].createElement(
                 'div',
-                { className: 'row' },
+                { className: 'panel-body' },
+                _react2['default'].createElement(_Cropper2['default'], { uploadImage: _actionsProfileActions2['default'].updateImage.bind(this), filler: '/img/profile-icon.png', image: this.props.user.image })
+              )
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-6' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'panel panel-default' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'panel-heading' },
+                'Profile'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'panel-body' },
                 _react2['default'].createElement(
                   'div',
-                  { className: 'col-sm-4' },
-                  'Password:'
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-4' },
+                    'Email:'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-8' },
+                    _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.email || "", placeholder: 'Set an Email', validate: this.validateEmail, change: _actionsProfileActions2['default'].updateEmail, errorText: 'Please enter a valid email' })
+                  )
                 ),
                 _react2['default'].createElement(
                   'div',
-                  { className: 'col-sm-8' },
-                  _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.password ? "••••••••" : "Unset", placeholder: 'Set an Password', validate: this.validatePass, change: _actionsProfileActions2['default'].updatePassword, errorText: 'Please enter a valid password' })
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-4' },
+                    'Password:'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-sm-8' },
+                    _react2['default'].createElement(_InlineEdit2['default'], { className: 'pull-right', text: this.props.user.local.password ? "••••••••" : "Unset", placeholder: 'Set a Password', validate: this.validatePass, change: _actionsProfileActions2['default'].updatePassword, errorText: 'Please enter a valid password' })
+                  )
                 )
               )
             )
@@ -3438,16 +3783,154 @@ var Profile = (function (_React$Component) {
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'col-sm-6' },
+          { className: 'row' },
           _react2['default'].createElement(
             'div',
-            { className: 'panel panel-default' },
+            { className: 'col-sm-7' },
             _react2['default'].createElement(
               'div',
-              { className: 'panel-heading' },
-              'Linked Accounts'
-            ),
-            _react2['default'].createElement('div', { className: 'panel-body' })
+              { className: 'panel panel-default' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'panel-heading' },
+                'Phone Information'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'panel-body' },
+                _react2['default'].createElement(
+                  'form',
+                  { onSubmit: this.handleSubmit.bind(this) },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'form-group ' + this.state.error },
+                    _react2['default'].createElement(
+                      'label',
+                      { className: 'control-label' },
+                      'Phone Number'
+                    ),
+                    _react2['default'].createElement('input', { type: 'phone', className: 'form-control', ref: 'phoneTextField', value: this.state.phone,
+                      onChange: this.updatePhone.bind(this), onBlur: this.validatePhone.bind(this) }),
+                    _react2['default'].createElement(
+                      'span',
+                      { className: 'help-block' },
+                      this.state.helpBlock
+                    )
+                  ),
+                  _react2['default'].createElement(
+                    'select',
+                    { className: 'form-control', value: this.state.carrier, onChange: this.setCarrier.bind(this) },
+                    _react2['default'].createElement(
+                      'option',
+                      { value: '' },
+                      'Select a Carrier'
+                    ),
+                    carriers
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'checkbox' },
+                    _react2['default'].createElement(
+                      'label',
+                      null,
+                      _react2['default'].createElement('input', { type: 'checkbox', checked: this.state.sms, onChange: this.checkBox.bind(this) }),
+                      ' Send me text message notifications'
+                    )
+                  ),
+                  _react2['default'].createElement(
+                    'button',
+                    { type: 'submit', className: 'btn btn-primary btn-space' },
+                    'Save'
+                  ),
+                  _react2['default'].createElement(
+                    'button',
+                    { type: 'button', className: 'btn btn-default', onClick: this.reset.bind(this) },
+                    'Reset'
+                  )
+                )
+              )
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'col-sm-5' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'panel panel-default' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'panel-heading' },
+                'Linked Accounts'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'panel-body' },
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'row', style: { paddingBottom: 10 } },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-xs-4' },
+                    'Google:'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-xs-8' },
+                    (function () {
+                      if (_this.props.user.google && _this.props.user.google.token) return _react2['default'].createElement(
+                        'p',
+                        null,
+                        _this.props.user.google.email,
+                        ' ',
+                        _react2['default'].createElement(
+                          'a',
+                          { href: '/auth/unlink/google', className: 'btn', style: { backgroundColor: "#DC4E41", color: "#fff" } },
+                          _react2['default'].createElement('span', { className: 'fa fa-google-plus-square' }),
+                          ' Unlink'
+                        )
+                      );else return _react2['default'].createElement(
+                        'a',
+                        { href: '/auth/connect/google', className: 'btn pull-right', style: { backgroundColor: "#DC4E41", color: "#fff" } },
+                        _react2['default'].createElement('span', { className: 'fa fa-google-plus-square' }),
+                        ' Connect'
+                      );
+                    })()
+                  )
+                ),
+                _react2['default'].createElement(
+                  'div',
+                  { className: 'row' },
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-xs-4' },
+                    'Facebook:'
+                  ),
+                  _react2['default'].createElement(
+                    'div',
+                    { className: 'col-xs-8' },
+                    (function () {
+                      if (_this.props.user.facebook && _this.props.user.facebook.token) return _react2['default'].createElement(
+                        'p',
+                        null,
+                        _this.props.user.facebook.email,
+                        ' ',
+                        _react2['default'].createElement(
+                          'a',
+                          { href: '/auth/unlink/facebook', className: 'btn', style: { backgroundColor: "#3b5998", color: "#fff" } },
+                          _react2['default'].createElement('span', { className: 'fa fa-facebook-square' }),
+                          ' Unlink'
+                        )
+                      );else return _react2['default'].createElement(
+                        'a',
+                        { href: '/auth/connect/facebook', className: 'btn pull-right', style: { backgroundColor: "#3b5998", color: "#fff" } },
+                        _react2['default'].createElement('span', { className: 'fa fa-facebook-square' }),
+                        ' Connect'
+                      );
+                    })()
+                  )
+                )
+              )
+            )
           )
         )
       );
@@ -3460,7 +3943,7 @@ var Profile = (function (_React$Component) {
 exports['default'] = Profile;
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":8,"./InlineEdit":17,"react":"react","react-router":"react-router"}],26:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"./Cropper":15,"./InlineEdit":19,"react":"react","react-router":"react-router","sms-address":"sms-address","underscore":"underscore"}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3689,7 +4172,7 @@ Signup.contextTypes = {
 exports['default'] = Signup;
 module.exports = exports['default'];
 
-},{"../actions/SignupActions":9,"../stores/SignupStore":38,"react":"react","underscore":"underscore"}],27:[function(require,module,exports){
+},{"../actions/SignupActions":9,"../stores/SignupStore":40,"react":"react","underscore":"underscore"}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3811,7 +4294,7 @@ var guardRouteAsync = function guardRouteAsync(fn, Component, _ref2) {
 exports.GuardRoute = guardRoute;
 exports.GuardRouteAsync = guardRouteAsync;
 
-},{"react":"react"}],28:[function(require,module,exports){
+},{"react":"react"}],30:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -3836,14 +4319,6 @@ if (window.ReactGlobals.token) {
   localStorage.setItem('token', window.ReactGlobals.token);
 }
 
-File.prototype.convertToBase64 = function (callback) {
-  var FR = new FileReader();
-  FR.onload = function (e) {
-    callback(e.target.result);
-  };
-  FR.readAsDataURL(this);
-};
-
 _alt2['default'].bootstrap(JSON.stringify({
   AuthStore: {
     token: localStorage.getItem('token') || '',
@@ -3852,11 +4327,103 @@ _alt2['default'].bootstrap(JSON.stringify({
   }
 }));
 
+(function () {
+  window.addEventListener('load', function () {
+    //  pushButton.addEventListener('click', function() { 
+    //    if (isPushEnabled) { 
+    //      unsubscribe(); 
+    //    } else { 
+    //      subscribe(); 
+    //    } 
+    //  });
+
+    // Check that service workers are supported, if so, progressively 
+    // enhance and add push messaging support, otherwise continue without it. 
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(initialiseState);
+    } else {
+      console.warn('Service workers aren\'t supported in this browser.');
+      _alt2['default'].bootstrap(JSON.stringify({
+        NotificationStore: {
+          enabled: false,
+          subscribed: false,
+          disableMessage: "Service workers aren\'t supported in this browser."
+        }
+      }));
+    }
+  });
+
+  // Once the service worker is registered set the initial state 
+  function initialiseState() {
+    // Are Notifications supported in the service worker? 
+    if (!('showNotification' in ServiceWorkerRegistration.prototype)) {
+      console.warn('Notifications aren\'t supported.');
+      return _alt2['default'].bootstrap(JSON.stringify({
+        NotificationStore: {
+          enabled: false,
+          subscribed: false,
+          disabledMessage: "Notifications aren\'t supported."
+        }
+      }));
+    }
+
+    // Check the current Notification permission. 
+    // If its denied, it's a permanent block until the 
+    // user changes the permission 
+    if (Notification.permission === 'denied') {
+      console.warn('The user has blocked notifications.');
+      return _alt2['default'].bootstrap(JSON.stringify({
+        NotificationStore: {
+          enabled: false,
+          subscribed: false,
+          disabledMessage: "The user has blocked notifications."
+        }
+      }));
+    }
+
+    // Check if push messaging is supported 
+    if (!('PushManager' in window)) {
+      console.warn('Push messaging isn\'t supported.');
+      return _alt2['default'].bootstrap(JSON.stringify({
+        NotificationStore: {
+          enabled: false,
+          subscribed: false,
+          disabledMessage: "Push messaging isn\'t supported."
+        }
+      }));
+    }
+
+    // We need the service worker registration to check for a subscription 
+    navigator.serviceWorker.ready.then(function (serviceWorkerRegistration) {
+      // Do we already have a push message subscription? 
+      serviceWorkerRegistration.pushManager.getSubscription().then(function (subscription) {
+        // Enable any UI which subscribes / unsubscribes from 
+        // push messages. 
+        if (subscription) {
+          // Keep your server in sync with the latest subscriptionId
+          sendSubscriptionToServer(subscription);
+        }
+
+        // Set your UI to show they have subscribed for 
+        // push messages 
+        _alt2['default'].bootstrap(JSON.stringify({
+          NotificationStore: {
+            enabled: true,
+            subscribed: subscription ? true : false
+          }
+        }));
+      })['catch'](function (err) {
+        console.warn('Error during getSubscription()', err);
+      });
+    });
+  }
+})();
+
 _reactRouter2['default'].run(_routes2['default'], _reactRouter2['default'].HistoryLocation, function (Handler) {
   _react2['default'].render(_react2['default'].createElement(Handler, null), document.getElementById('app'));
 });
 
-},{"./alt":10,"./routes":29,"react":"react","react-router":"react-router"}],29:[function(require,module,exports){
+},{"./alt":10,"./routes":31,"react":"react","react-router":"react-router"}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3981,7 +4548,7 @@ var routes = _react2['default'].createElement(
 exports['default'] = routes;
 module.exports = exports['default'];
 
-},{"./components/AddPlant":11,"./components/App":12,"./components/Auth":13,"./components/Feedback":14,"./components/Home":16,"./components/Plant":19,"./components/PlantList":20,"./components/Plants":21,"./components/Profile":22,"./components/ProfileEdit":23,"./components/ProfileNotifications":24,"./components/ProfileOverview":25,"./components/Signup":26,"./guards":27,"./stores/AuthStore":31,"react":"react","react-router":"react-router","underscore":"underscore"}],30:[function(require,module,exports){
+},{"./components/AddPlant":11,"./components/App":12,"./components/Auth":13,"./components/Feedback":16,"./components/Home":18,"./components/Plant":21,"./components/PlantList":22,"./components/Plants":23,"./components/Profile":24,"./components/ProfileEdit":25,"./components/ProfileNotifications":26,"./components/ProfileOverview":27,"./components/Signup":28,"./guards":29,"./stores/AuthStore":33,"react":"react","react-router":"react-router","underscore":"underscore"}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4050,7 +4617,7 @@ var AddPlantStore = (function () {
 exports['default'] = _alt2['default'].createStore(AddPlantStore);
 module.exports = exports['default'];
 
-},{"../actions/AddPlantActions":1,"../alt":10,"underscore":"underscore"}],31:[function(require,module,exports){
+},{"../actions/AddPlantActions":1,"../alt":10,"underscore":"underscore"}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4162,7 +4729,7 @@ var AuthStore = (function () {
 exports['default'] = _alt2['default'].createStore(AuthStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../alt":10}],32:[function(require,module,exports){
+},{"../actions/AuthActions":2,"../alt":10}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4190,7 +4757,7 @@ var FooterStore = function FooterStore() {
 exports['default'] = _alt2['default'].createStore(FooterStore);
 module.exports = exports['default'];
 
-},{"../actions/FooterActions":3,"../alt":10}],33:[function(require,module,exports){
+},{"../actions/FooterActions":3,"../alt":10}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4218,7 +4785,7 @@ var HomeStore = function HomeStore() {
 exports['default'] = _alt2['default'].createStore(HomeStore);
 module.exports = exports['default'];
 
-},{"../actions/HomeActions":4,"../alt":10}],34:[function(require,module,exports){
+},{"../actions/HomeActions":4,"../alt":10}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4296,7 +4863,7 @@ var NavbarStore = (function () {
 exports['default'] = _alt2['default'].createStore(NavbarStore);
 module.exports = exports['default'];
 
-},{"../actions/NavbarActions":5,"../alt":10}],35:[function(require,module,exports){
+},{"../actions/NavbarActions":5,"../alt":10}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4324,20 +4891,80 @@ var PlantStore = (function () {
     _classCallCheck(this, PlantStore);
 
     this.bindActions(_actionsPlantActions2['default']);
-    this.editingImage = false;
     this.device = {};
+    this.chartLevel = 'hourly';
+    this.tempScale = 'F';
+    this.labels = [];
+    this.tempData = [];
+    this.soilData = [];
+    this.humidData = [];
+    this.luxData = [];
   }
 
   _createClass(PlantStore, [{
-    key: 'onEditingImage',
-    value: function onEditingImage() {
-      this.editingImage = true;
-    }
-  }, {
     key: 'onDeviceFetched',
     value: function onDeviceFetched(payload) {
       this.device = payload.device;
+      _actionsPlantActions2['default'].fetchRecords(this.device._id, this.chartLevel);
     }
+  }, {
+    key: 'onRecordsRetreived',
+    value: function onRecordsRetreived(payload) {
+      var _this = this;
+
+      this.tempData = [[]];
+      this.soilData = [[]];
+      this.humidData = [[]];
+      this.luxData = [[]];
+      this.labels = [];
+
+      if (this.chartLevel == 'hourly') {
+        payload.forEach(function (record) {
+          if (record._id.interval == 0) _this.labels.push(record._id.hour);else _this.labels.push(null);
+        });
+      } else if (this.chartLevel == 'weekly') {
+        var trans = { 1: "Sunday", 2: "Monday", 3: "Tuesday", 4: "Wednesday", 5: "Thursday", 6: "Firday", 7: "Saturday" };
+        payload.forEach(function (record) {
+          if (record._id.interval == 0) _this.labels.push(trans[record._id.dayOfWeek]);else _this.labels.push(null);
+        });
+      } else if (this.chartLevel == 'monthly') {
+        payload.forEach(function (record) {
+          _this.labels.push(record._id.dayOfMonth);
+        });
+      }
+
+      payload.forEach(function (record) {
+        _this.tempData[0].push(_this.tempScale == 'C' ? record.temp : record.temp * 1.8 + 32);
+        _this.soilData[0].push(record.soil);
+        _this.luxData[0].push(record.lux);
+        _this.humidData[0].push(record.humid);
+      });
+    }
+  }, {
+    key: 'onChartRange',
+    value: function onChartRange(range) {
+      var _this2 = this;
+
+      this.chartLevel = range[0];
+      setTimeout(function () {
+        return _actionsPlantActions2['default'].fetchRecords(_this2.device._id, _this2.chartLevel);
+      }, 100);
+    }
+  }, {
+    key: 'onTempScale',
+    value: function onTempScale(scale) {
+      this.tempDataTemp = [[]];
+      if (this.tempScale != scale[0]) {
+        for (var i = 0; i < this.tempData[0].length; i++) {
+          if (scale[0] == 'C') this.tempDataTemp[0].push((this.tempData[0][i] - 32) / 1.8);else this.tempDataTemp[0].push(this.tempData[0][i] * 1.8 + 32);
+        }
+      }
+      this.tempData = this.tempDataTemp;
+      this.tempScale = scale[0];
+    }
+  }, {
+    key: 'onRecordsError',
+    value: function onRecordsError(payload) {}
   }]);
 
   return PlantStore;
@@ -4346,7 +4973,7 @@ var PlantStore = (function () {
 exports['default'] = _alt2['default'].createStore(PlantStore);
 module.exports = exports['default'];
 
-},{"../actions/PlantActions":6,"../alt":10,"underscore":"underscore"}],36:[function(require,module,exports){
+},{"../actions/PlantActions":6,"../alt":10,"underscore":"underscore"}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4429,7 +5056,7 @@ var PlantsStore = (function () {
 exports['default'] = _alt2['default'].createStore(PlantsStore);
 module.exports = exports['default'];
 
-},{"../actions/PlantsActions":7,"../alt":10,"underscore":"underscore"}],37:[function(require,module,exports){
+},{"../actions/PlantsActions":7,"../alt":10,"underscore":"underscore"}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4516,7 +5143,7 @@ var ProfileStore = (function () {
 exports['default'] = _alt2['default'].createStore(ProfileStore);
 module.exports = exports['default'];
 
-},{"../actions/ProfileActions":8,"../alt":10,"underscore":"underscore"}],38:[function(require,module,exports){
+},{"../actions/ProfileActions":8,"../alt":10,"underscore":"underscore"}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4653,4 +5280,4 @@ var SignupStore = (function () {
 exports['default'] = _alt2['default'].createStore(SignupStore);
 module.exports = exports['default'];
 
-},{"../actions/AuthActions":2,"../actions/SignupActions":9,"../alt":10}]},{},[28]);
+},{"../actions/AuthActions":2,"../actions/SignupActions":9,"../alt":10}]},{},[30]);

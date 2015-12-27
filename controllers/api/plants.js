@@ -11,7 +11,6 @@ var config = rootRequire('config/auth');
 
 var mongoose = require('mongoose');
 //var TabInfo = rootRequire('models/tabInfo');
-var User = rootRequire('models/device');
 var Device = rootRequire('models/device');
 var PlantRecord = rootRequire('models/plantRecord');
 /*
@@ -72,11 +71,10 @@ module.exports = function(passport) {
   });
 
   router.post('/:location/:id/update', function(req, res, next) {
-    var location = req.user.locations.id(req.params.location)
+    var location = req.user.locations.id(req.params.location);
     if (!location) { return res.status(404).json({err: "Cannot find location that plant is in"}); }
-    var plant = location.plants.id(req.params.id)
+    var plant = location.plants.id(req.params.id);
     if (!plant) { return res.status(404).json({err: "Cannot find plant with that ID"}); }
-    
     Object.keys(req.body).forEach(function(key) {
       plant[key] = req.body[key];
     });

@@ -5,6 +5,8 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var JwtStrategy = require('passport-jwt').Strategy;
+var jwt = require('jsonwebtoken');
+
 var uuid = require('node-uuid');
 
 var configAuth = require('./auth');
@@ -133,7 +135,7 @@ module.exports = function(passport) {
         // asynchronous
         process.nextTick(function() {
            //Check if the user is already logged in
-           if (!req.user) {
+           if (!req.query.status) {
               // find the user in the database based on their facebook id
               User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
 
@@ -179,9 +181,15 @@ module.exports = function(passport) {
                   }
               });
            } else {
-                // user already exists and is logged in, we have to link accounts
-                var user            = req.user; // pull the user out of the session
+             
+            //Lets find our user
+            jwt.verify(req.query.status, configAuth.jwtKey, {
+              issuer: configAuth.jwtOptions.issuer,
+              audience: configAuth.jwtOptions.audience }, function(err, decoded){
 
+              if (err) throw err;
+              User.findOne({_id: decoded.user}, function(err, user) {
+                if (err) throw err;
                 // update the current users facebook credentials
                 user.facebook.id    = profile.id;
                 user.facebook.token = token;
@@ -194,7 +202,9 @@ module.exports = function(passport) {
                         throw err;
                     return done(null, user);
                 });
-            }
+              });
+            });
+           }
         });
     }));
 
@@ -233,53 +243,60 @@ module.exports = function(passport) {
         // make the code asynchronous
         // User.findOne won't fire until we have all our data back from Google
         process.nextTick(function() {
-            if(!req.user) { 
-              // try to find the user based on their google id
-              User.findOne({ 'google.id' : profile.id }, function(err, user) {
-                  if (err)
-                      return done(err);
+          if(!req.query.status) { 
+            // try to find the user based on their google id
+            User.findOne({ 'google.id' : profile.id }, function(err, user) {
+                if (err)
+                    return done(err);
 
-                  if (user) {
-                      // if there is a user id already but no token (user was linked at one point and then removed)
-                      // just add our token and profile information
-                      if (!user.google.token) {
-                          // set all of the relevant information
-                          user.google.id    = profile.id;
-                          user.google.token = token;
-                          user.google.name  = profile.displayName;
-                          user.google.email = profile.emails[0].value; // pull the first email
+                if (user) {
+                    // if there is a user id already but no token (user was linked at one point and then removed)
+                    // just add our token and profile information
+                    if (!user.google.token) {
+                        // set all of the relevant information
+                        user.google.id    = profile.id;
+                        user.google.token = token;
+                        user.google.name  = profile.displayName;
+                        user.google.email = profile.emails[0].value; // pull the first email
 
-                          user.save(function(err) {
-                              if (err)
-                                  throw err;
-                              return done(null, user);
-                          });
-                      }
-                      // if a user is found, log them in
-                      return done(null, user);
-                  } else {
-                      // if the user isnt in our database, create a new user
-                      var newUser          = new User();
+                        user.save(function(err) {
+                            if (err)
+                                throw err;
+                            return done(null, user);
+                        });
+                    }
+                    // if a user is found, log them in
+                    return done(null, user);
+                } else {
+                    // if the user isnt in our database, create a new user
+                    var newUser          = new User();
 
-                      // set all of the relevant information
-                      newUser.google.id    = profile.id;
-                      newUser.google.token = token;
-                      newUser.google.name  = profile.displayName;
-                      newUser.google.email = profile.emails[0].value; // pull the first email
+                    // set all of the relevant information
+                    newUser.google.id    = profile.id;
+                    newUser.google.token = token;
+                    newUser.google.name  = profile.displayName;
+                    newUser.google.email = profile.emails[0].value; // pull the first email
 
-                      // save the user
-                      newUser.save(function(err) {
-                          if (err)
-                              throw err;
-                          return done(null, newUser);
-                      });
-                  }
-              });
-            } else {
-                // user already exists and is logged in, we have to link accounts
-                var user            = req.user; // pull the user out of the session
+                    // save the user
+                    newUser.save(function(err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+            });
+          } else {
+            // user already exists and is logged in, we have to link accounts
 
-                // update the current users facebook credentials
+            //Lets find our user
+            jwt.verify(req.query.status, configAuth.jwtKey, {
+              issuer: configAuth.jwtOptions.issuer,
+              audience: configAuth.jwtOptions.audience }, function(err, decoded){
+
+              if (err) throw err;
+              User.findOne({_id: decoded.user}, function(err, user) {
+                if (err) throw err;
+                // update the current users google's credentials
                 user.google.id    = profile.id;
                 user.google.token = token;
                 user.google.name  = profile.displayName;
@@ -291,7 +308,9 @@ module.exports = function(passport) {
                         throw err;
                     return done(null, user);
                 });
-            }
+              });
+            });
+          }
         });
     })); 
 };

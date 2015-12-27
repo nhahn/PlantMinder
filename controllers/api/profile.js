@@ -68,6 +68,34 @@ module.exports = function(passport) {
       res.json({local: {email: req.user.email}});
     });
   });
+  
+  router.post('/update/phone', function(req, res, next) {
+    req.user.phone = req.body.phone;
+    req.user.carrier = req.body.carrier;
+    req.user.notifications.sms = false;
+    req.user.save(function(err) {
+      if (err) {
+        res.status(403);
+        res.flash("Invalid phone", "error");
+        res.json({err: err.message});
+      }
+      res.flash("Phone updated!", "info");
+      res.json({phone: req.user.phone, carrier: req.user.carrier, notificaations: {sms: req.user.notifications.sms}});
+    });
+  });
 
+  router.post('/update/image', function(req, res, next) {
+    req.user.image = req.body.image;
+    req.user.save(function(err) {
+      if (err) {
+        res.status(403);
+        res.flash("Invalid image", "error");
+        res.json({err: err.message});
+      }
+      res.flash("Profile image updated!", "info");
+      res.json({image: req.user.image});
+    });
+  });
+  
   return router;
 }

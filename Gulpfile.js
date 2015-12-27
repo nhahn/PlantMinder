@@ -14,6 +14,7 @@ var watchify = require('watchify');
 var uglify = require('gulp-uglify');
 var removeCode = require('gulp-remove-code');
 var aliasify = require('aliasify').configure
+var sass = require('gulp-sass');
 
 var production = process.env.NODE_ENV === 'production';
 
@@ -25,7 +26,9 @@ var dependencies = [
   'underscore',
   'react-select',
   'react-bootstrap',
-  'react-router-active-component'
+  'react-router-active-component',
+  'sms-address',
+  'react-bootstrap-switch'
 ];
 
 /*
@@ -43,8 +46,7 @@ gulp.task('vendor', function() {
     'vendor/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js',
     'vendor/cropit/dist/jquery.cropit.js',
     'vendor/gsap/src/minified/TweenMax.min.js',
-    'vendor/d3/d3.js',
-    'vendor/nvd3/build/nv.d3.js',
+    'vendor/chartist/dist/chartist.min.js'
   ]).pipe(concat('vendor.js'))
     .pipe(gulpif(production, uglify({ mangle: false })))
     .pipe(gulp.dest('public/js'));
@@ -120,9 +122,10 @@ gulp.task('browserify-watch', ['browserify-vendor'], function() {
  */
 gulp.task('styles', function() {
     return gulp.src([
-      'app/stylesheets/main.less',
+      'vendor/chartist/dist/chartist.min.css',
       'node_modules/react-select/less/default.less',
-      'vendor/nvd3/build/nv.d3.css'])
+      'vendor/nvd3/build/nv.d3.css',
+      'app/stylesheets/main.less'])
     .pipe(plumber())
     .pipe(less())
     .pipe(autoprefixer())

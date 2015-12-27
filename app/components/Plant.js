@@ -4,6 +4,9 @@ import PlantActions from '../actions/PlantActions';
 import PlantsActions from '../actions/PlantsActions';
 import InlineEdit from './InlineEdit';
 import {findWhere, find} from 'underscore';
+import {ButtonGroup, Button} from 'react-bootstrap';
+import Chart from './Chart';
+import Cropper from './Cropper';
 
 class Plant extends React.Component {
   constructor(props) {
@@ -15,74 +18,7 @@ class Plant extends React.Component {
 
   componentDidMount() {
     PlantStore.listen(this.onChange);
-    var loaded = true;
-    this.cropit = $('#image-cropper').cropit({ 
-      imageState: { src: (this.plant.image != "")? this.plant.image : '/img/filler.jpg' },
-      imageBackground: true,
-      onImageLoaded: () => {
-        if (!loaded)
-          PlantActions.editingImage();
-        else
-          loaded = false;
-      }
-    });
     PlantActions.fetchDevice(this.props.params.id);
-    nv.addGraph(() => {
-      var chart = nv.models.lineWithFocusChart();
-
-      chart.xAxis
-          .tickFormat(d3.format(',f'));
-
-      chart.yAxis
-          .tickFormat(d3.format(',.2f'));
-
-      chart.y2Axis
-          .tickFormat(d3.format(',.2f'));
-
-      d3.select('#chart1 svg')
-          .datum(this.testData())
-          .transition().duration(500)
-          .call(chart);
-
-      nv.utils.windowResize(chart.update);
-
-      return chart;
-    });
-    /**************************************
-     * Simple test data generator
-     */
-  }
-  
-  testData() {
-    return this.stream_layers(3,128,.1).map(function(data, i) {
-      return { 
-        key: 'Stream' + i,
-        values: data
-      };
-    });
-  }
-  
-  stream_layers(n, m, o) {
-    function stream_index(d, i) {
-      return {x: i, y: Math.max(0, d)};
-    }
-    
-    if (arguments.length < 3) o = 0;
-    function bump(a) {
-      var x = 1 / (.1 + Math.random()),
-          y = 2 * Math.random() - .5,
-          z = 10 / (.1 + Math.random());
-      for (var i = 0; i < m; i++) {
-        var w = (i / m - y) * z;
-        a[i] += x * Math.exp(-w * w);
-      }
-    }
-    return d3.range(n).map(function() {
-        var a = [], i;
-        for (i = 0; i < m; i++) a[i] = o + o * Math.random();
-        for (i = 0; i < 5; i++) bump(a);
-        return a.map(stream_index);
-    });
   }
   
   componentWillReceiveProps(nextProps) {
@@ -91,15 +27,6 @@ class Plant extends React.Component {
 
   componentWillUnmount() {
     PlantStore.unlisten(this.onChange);
-  }
-
-  saveImage() { //Convert to bas64, resize, and then upload
-    var image = $(this.cropit).cropit('export', {
-      type: 'image/jpeg',
-      quality: .9,
-      originalSize: false
-    });
-    PlantsActions.uploadImage(this.props.location, this.plant, image);
   }
   
   onChange(state) {
@@ -112,21 +39,7 @@ class Plant extends React.Component {
       <div>
       <div className="row fadeInUp animated">
         <div className="col-md-4 col-sm-5" >
-          <div id="image-cropper" className="img-responsive">
-            <div className="cropit-image-preview-container">
-              <div className="cropit-image-preview" style={{width: 200, height: 200}}></div>
-            </div>
-            <input type="range" style={{visibility: (this.state.editingImage)? 'visible': 'hidden'}} id="imageZoom" className="cropit-image-zoom-input" />
-            <input type="file" style={{visibility: 'hidden'}} className="cropit-image-input" />
-          </div>
-          <div className="row" syle={{paddingTop: 10}}>
-            <div className="col-xs-6">
-              <button className="btn btn-default" onClick={() => $('.cropit-image-input').click()}>Change Picture</button>&nbsp;
-            </div>
-            <div className="col-xs-6">
-              <button className="btn btn-primary" onClick={this.saveImage.bind(this)}>Save Picture</button>
-            </div>
-          </div>
+          <Cropper uploadImage={PlantsActions.uploadImage.bind(this, this.props.location, this.plant)} filler='/img/filler.jpg' image={this.plant.image}/>
         </div>
         <div className="col-sm-7">
           <div className="row">
@@ -161,13 +74,30 @@ class Plant extends React.Component {
               {this.state.device.firmware}
             </div>
           </div>
+          <hr/>
+          <div className="row">
+            
+          </div>
         </div>
       </div>
-      <div className="row">
-        <div className="col-xs-12" id="chart1">
-          <svg style={{height: 500}}></svg>
+      <div className="row" style={{paddingBottom: 20, paddingTop: 20}}>
+        <div className="col-xs-12">
+          <ButtonGroup>
+            <Button active={this.state.chartLevel == 'hourly'} bsSize="sm" onClick={PlantActions.chartRange.bind(this, 'hourly')}>Hourly</Button>
+            <Button active={this.state.chartLevel == 'weekly'} bsSize="sm" onClick={PlantActions.chartRange.bind(this, 'weekly')}>Weekly</Button>
+            <Button active={this.state.chartLevel == 'monthly'} bsSize="sm" onClick={PlantActions.chartRange.bind(this, 'monthly')}>Monthly</Button>
+          </ButtonGroup>
         </div>
       </div>
+      <Chart aspectRatio="ct-double-octave" className="ct-lux" labels={this.state.labels} data={this.state.luxData} img="/img/sun.svg" name="Sunlight"/>
+      <Chart aspectRatio="ct-double-octave" className="ct-soil" labels={this.state.labels} data={this.state.soilData} img="/img/watering_can.svg" name="Soil Moisture"/>
+      <Chart aspectRatio="ct-double-octave" className="ct-temp" labels={this.state.labels} data={this.state.tempData} img="/img/thermometer.svg" name="Temperature">
+        <ButtonGroup className="pull-right">
+            <Button active={this.state.tempScale == 'F'} bsSize="sm" onClick={PlantActions.tempScale.bind(this, 'F')}>F</Button>
+            <Button active={this.state.tempScale == 'C'} bsSize="sm" onClick={PlantActions.tempScale.bind(this, 'C')}>C</Button>
+          </ButtonGroup>
+      </Chart>
+      <Chart aspectRatio="ct-double-octave" className="ct-humid" labels={this.state.labels} data={this.state.humidData} img="/img/humidity.svg" name="Humidity"/>
       </div>
     );
   }

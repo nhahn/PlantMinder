@@ -39,14 +39,14 @@ class Plants extends React.Component {
     return (
       <div className='container'>
         <div className="row">
-          <div className="col-sm-3">
+          <div className="col-sm-2">
             <h3>Locations</h3>
             <ul className="nav nav-pills nav-stacked">
               {locations}
             </ul>
             <br/>
           </div>
-          <div className="col-sm-9">
+          <div className="col-sm-10">
             <h3>Your Plants</h3>
             {(() => {
               if (this.state.locations.length > 0)

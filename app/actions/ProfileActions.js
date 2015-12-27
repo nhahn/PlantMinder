@@ -50,6 +50,34 @@ class ProfileActions {
         this.actions.updateUserFail({errorMessage: jqXhr.responseJSON.err});
       }); 
   }
+  
+  updateImage(image) {
+    $.ajax({
+      type: 'POST',
+      url: '/api/profile/update/image',
+      data: {image: image}
+    })
+      .done((data) => {
+        this.actions.updateUser({user: data});
+    })  
+      .fail((jqXhr) => {
+        this.actions.updateUserFail({errorMessage: jqXhr.responseJSON.err});
+      }); 
+  }
+  
+  savePhone(phone, carrier, sms) {
+    $.ajax({
+      type: 'POST',
+      url: '/api/profile/update/phone',
+      data: {phone: phone, carrier: carrier, sms: sms}
+    })
+      .done((data) => {
+        this.actions.updateUser({user: data});
+    })  
+      .fail((jqXhr) => {
+        this.actions.updateUserFail({errorMessage: jqXhr.responseJSON.err});
+      }); 
+  }
 
 }
 
